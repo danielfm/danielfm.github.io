@@ -1,0 +1,54 @@
+title:            Daniel Martins
+tagline:          Inner junk. Exposed.
+description:
+#Comment out url when working locally to resolve base urls correctly
+#url: http://danielfm.me
+
+# Owner/author information
+owner:
+  name:           Daniel Martins
+  avatar:         http://www.gravatar.com/avatar/fddde9212fa2082e7c5eb27b069567d9.png?s=200
+  bio:            Software engineer
+  email:          daniel.tritone@gmail.com
+  twitter:        danielfmt
+  github:         danielfm
+  instagram:           
+  dribbble:       
+  disqus:         danielfm
+  # Plug in your disqus shortname!
+  
+
+# Links to include in top navigation
+# For external links add external: true
+links:
+  - title: About
+    url: /about
+  - title: Github
+    url: https://github.com/danielfm
+    external: true
+
+# http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone:    America/Sao_Paulo
+future:      true
+pygments:    false
+markdown:    kramdown
+
+kramdown:
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  use_coderay: false
+
+  coderay:
+    coderay_line_numbers: 
+    coderay_line_numbers_start: 1
+    coderay_tab_width: 4
+    coderay_bold_every: 10
+    coderay_css: class
+
+# https://github.com/mojombo/jekyll/wiki/Permalinks
+permalink:   /:year/:month/:day/:title.html
+
+include: [".htaccess"]
+exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp"]
