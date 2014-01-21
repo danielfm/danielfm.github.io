@@ -282,7 +282,8 @@ header.site-header nav {
         max-height: 800px;
         position: absolute;
         z-index: 2;
-        background: rgba(0,0,0,.55);
+        opacity: 0.4;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0) 100%);
     }
     .overlay-lighter {
         background: rgba(0,0,0,.1);
