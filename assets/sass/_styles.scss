@@ -175,10 +175,10 @@ header.site-header {
   position: absolute;
   width: 100%;
   z-index: 5000;
-  background-color: rgba(0,0,0,0.2);
+  @include background-gradient(rgba(0,0,0,.7), rgba(0,0,0,0));
 
   &.darken {
-    background-color: transparent;
+    background: transparent;
   }
 
   .wrap {
