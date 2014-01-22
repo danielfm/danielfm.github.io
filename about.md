@@ -1,6 +1,6 @@
 ---
 layout: post
-permalink: /about/
+permalink: /about.html
 title: About
 description: I'm Daniel Martins. Welcome to my place!
 date: 2012-04-01 22:00
