@@ -178,7 +178,7 @@ header.site-header {
   @include background-gradient(rgba(0,0,0,.7), rgba(0,0,0,0));
 
   &.darken {
-    background: transparent;
+    @include background-gradient(rgba(255,255,255,.7), rgba(255,255,255,0));
   }
 
   .wrap {
