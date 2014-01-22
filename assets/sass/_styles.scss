@@ -175,7 +175,12 @@ header.site-header {
   position: absolute;
   width: 100%;
   z-index: 5000;
-  
+  background-color: rgba(0,0,0,0.2);
+
+  &.darken {
+    background-color: transparent;
+  }
+
   .wrap {
       max-width: 90vw;
   }
@@ -183,7 +188,6 @@ header.site-header {
 }
 
 #bump .darken {
-      
       a {
       color: $black;
       @include transit(all, .2s, ease-in-out);
@@ -259,7 +263,7 @@ header.site-header nav {
         color: white;
         @include transit(all, .2s, ease);
         &:hover {
-            @include tshd(0, 0, 3px, rgba(255,255,255,.6));
+            @include tshd(0, 0, 10px, rgba(255,255,255,.6));
             @include transit(all, .2s, ease);
         }
     } 
@@ -282,8 +286,8 @@ header.site-header nav {
         max-height: 800px;
         position: absolute;
         z-index: 2;
-        opacity: 0.4;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0) 100%);
+        opacity: 0.1;
+        background: #000;
     }
     .overlay-lighter {
         background: rgba(0,0,0,.1);
@@ -733,8 +737,7 @@ footer {
   
   header.site-header {
     min-height: 59px;
-    margin-top: 20px;
-    padding-top: 0;
+    padding-top: 20px;
   }
   
   header.site-header hgroup h1 {
