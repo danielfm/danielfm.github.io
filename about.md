@@ -19,8 +19,5 @@ I currently live in Rio de Janeiro, although I was born and grew up near São
 Paulo. When I'm not coding (which is most of the time), I like to
 watch movies/TV series, play the guitar and have some beer with my friends.
 
-Want to know more about my work and interests? Visit me at
-[GitHub](http://github.com/danielfm),
-[LinkedIn](http://linkedin.com/in/danielfmartins),
-[Twitter](http://twitter.com/danielfmt),
-[G+](https://plus.google.com/109108662496973028846).
+Want to know more about my work and interests? Here's my
+[LinkedIn](http://linkedin.com/in/danielfmartins).
