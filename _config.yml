@@ -1,8 +1,9 @@
 title:            Daniel Martins
 tagline:          Inner junk. Exposed.
 description:
-#Comment out url when working locally to resolve base urls correctly
-#url: http://danielfm.me
+
+# Comment out url when working locally to resolve base urls correctly
+url: http://danielfm.me
 
 # Owner/author information
 owner:
