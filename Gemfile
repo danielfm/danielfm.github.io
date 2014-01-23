@@ -5,3 +5,4 @@ gem 'jekyll-minibundle'
 
 gem 'coderay'
 gem 'RedCloth'
+gem 'sass'
