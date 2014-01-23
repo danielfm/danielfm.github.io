@@ -46,7 +46,7 @@ kramdown:
     coderay_css: class
 
 # https://github.com/mojombo/jekyll/wiki/Permalinks
-permalink:   /:year/:month/:day/:title.html
+permalink:   /posts/:title.html
 
 include: [".htaccess"]
 exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp"]
