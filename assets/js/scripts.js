@@ -17,23 +17,6 @@ $(document).ready(function() {
 
 });
 
-$(function() {
-  $("#logo a").click(function(e) {
-    e.preventDefault();
-    $("body,html").animate({scrollTop: 0});
-  });
-
-  $("article.post").waypoint(function(direction) {
-    if (direction === "down") {
-      $("#logo").css({opacity: 0}).show().animate({opacity: 1});
-    } else if (direction === "up" ) {
-      $("#logo").animate({opacity: 0}, function() {
-        $(this).hide();
-      });
-    }
-  });
-});
-
 $(function(){
   $('<img>').attr('src',function(){
       var imgUrl = $('div.featured-image').css('background-image');
