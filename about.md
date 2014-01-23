@@ -1,8 +1,8 @@
 ---
 layout: post
 permalink: /about.html
-title: About
-description: I'm Daniel Martins. Welcome to my place!
+title: Who am I?
+description: 
 date: 2012-04-01 22:00
 image:
   feature: about.jpg
