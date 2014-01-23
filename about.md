@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: page
 permalink: /about.html
 title: Who am I?
 description: 
