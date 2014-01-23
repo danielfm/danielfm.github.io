@@ -472,8 +472,11 @@ header.site-header nav {
     background: #000;
     min-height: 250px;
     height: 40vw;
-    max-height: 500px;
+    max-height: 60vh;
     width: 100%; }
+    .article .feature-wrapper.big {
+      height: 100vh;
+      max-height: 100%; }
     .article .feature-wrapper.lighter {
       background: #fff; }
   .article .featured-image {
