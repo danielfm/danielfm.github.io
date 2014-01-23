@@ -10,11 +10,11 @@ owner:
   avatar:         http://www.gravatar.com/avatar/fddde9212fa2082e7c5eb27b069567d9.png?s=200
   bio:            Software engineer
   email:          daniel.tritone@gmail.com
+  disqus:         danielfm
   twitter:        danielfmt
   github:         danielfm
   instagram:           
-  dribbble:       
-  disqus:         danielfm
+
   # Plug in your disqus shortname!
   
 
@@ -23,9 +23,6 @@ owner:
 links:
   - title: About
     url: /about.html
-  - title: Github
-    url: https://github.com/danielfm
-    external: true
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    America/Sao_Paulo
