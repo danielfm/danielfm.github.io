@@ -50,12 +50,26 @@ small {
     background: $hilite;
 }
 
-blockquote, blockquote p {
+blockquote {
+  margin-left: -25px;
+  border-left: 3px solid $link;
+
+  p {
+    margin-left: 22px;
     font-style: italic;
-    line-height: 1.3em;
-    text-align: center;
     color: lighten($black, .2);
-    margin-bottom: $lh;
+  }
+
+  &.pullquote {
+    border: 0;
+
+    &, p {
+      margin: 0;
+      line-height: 1.3em;
+      text-align: center;
+      margin-bottom: $lh;
+    }
+  }
 }
 
 
@@ -156,7 +170,6 @@ input {
     float: none;
     margin: 0 auto;
     @include clearfix;
-    overflow: hidden;
 }
 
 .post {
@@ -681,10 +694,6 @@ footer {
 
 h1 {
     font-size: $fs2;
-}
-
-blockquote, blockquote p {
-    font-size: $fs3;
 }
 
 footer {

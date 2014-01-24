@@ -38,7 +38,11 @@ h6,.h6 {      font-size: $fs6; }
 
 .meta {       font-size: $fs6; }
 
-blockquote, blockquote p {  font-size: $fs2; }
+blockquote.pullquote {
+  &, p {
+    font-size: $fs2;
+  }
+}
 
 .archive input { font-size: $fs2}
 
@@ -76,7 +80,11 @@ h6,.h6 {      font-size: $fs6; }
 
 .meta {       font-size: $fs6; }
 
-blockquote, blockquote p {  font-size: $fs4; }
+blockquote.pullquote {
+  &, p {
+    font-size: $fs4;
+  }
+}
 
 .archive input { font-size: $fs3}
 
