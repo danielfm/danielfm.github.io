@@ -1,23 +1,25 @@
-title:            Daniel Martins
-tagline:          Inner junk. Exposed.
+title:       Daniel Martins
+tagline:     Inner junk. Exposed.
 description:
 
 # Comment out url when working locally to resolve base urls correctly
-url: http://danielfm.me
+url: http://www.danielfm.me
+
+# Google analytics tracking
+analytics:
+  code: UA-761701-11
+  domain: www.danielfm.me
 
 # Owner/author information
 owner:
   name:           Daniel Martins
   avatar:         http://www.gravatar.com/avatar/fddde9212fa2082e7c5eb27b069567d9.png?s=200
-  bio:            Software engineer
+  bio:            Software engineer at globo.com
   email:          daniel.tritone@gmail.com
   disqus:         danielfm
   twitter:        danielfmt
   github:         danielfm
   instagram:           
-
-  # Plug in your disqus shortname!
-  
 
 # Links to include in top navigation
 # For external links add external: true
