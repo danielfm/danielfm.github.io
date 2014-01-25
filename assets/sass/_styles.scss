@@ -322,7 +322,6 @@ header.site-header nav {
     vertical-align: middle;
     background-position: center center;
     background-size: cover;
-    vertical-align: middle;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -758,12 +757,6 @@ footer {
 @media only screen and (max-width : 680px) {
   
  /* All Posts */
-  
-  section.article img.loading {
-    top: 10px !important;
-    right: 6%;
-    left: inherit;
-  }
   
   header.site-header {
     min-height: 59px;

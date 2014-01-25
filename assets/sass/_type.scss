@@ -9,19 +9,19 @@
    ========================================================================== */
 
 p {           
-    font-size: $fsp;
-    line-height: $lh; 
+  font-size: $fsp;
+  line-height: $lh; 
 }
 
 .intro {      
-    font-size: $fs3; 
-    line-height: 1.4em;
+  font-size: $fs3; 
+  line-height: 1.4em;
 }
 
 .post ul li {
-    font-size: $fsp;
-    line-height: $lh;
-    margin-bottom: $lh/3;
+  font-size: $fsp;
+  line-height: $lh;
+  margin-bottom: $lh/3;
 }
 
 
@@ -46,48 +46,40 @@ blockquote.pullquote {
 
 .archive input { font-size: $fs2}
 
-
-
-
-
-
 // Iphone 
 
 @media only screen and (max-width: $breakpoint-1-max-width) {
 
-p {           
+  p {           
     font-size: $fs5;
     line-height: $lhsmall;
-}
+  }
 
-.intro {      
+  .intro {      
     font-size: $fs4; 
     line-height: 1.4em;
-}
+  }
 
-.post ul li {
+  .post ul li {
     font-size: $fs5;
     line-height: $lhsmall;
     margin-bottom: $lhsmall/2;
-}
-
-h1,.h1 {      font-size: $fs2; }
-h2,.h2 {      font-size: $fs3; } 
-h3,.h3 {      font-size: $fs4; } 
-h4,.h4 {      font-size: $fs5; } 
-h5,.h5 {      font-size: $fs6; } 
-h6,.h6 {      font-size: $fs6; } 
-
-.meta {       font-size: $fs6; }
-
-blockquote.pullquote {
-  &, p {
-    font-size: $fs4;
   }
+
+  h1,.h1 {      font-size: $fs2; }
+  h2,.h2 {      font-size: $fs3; } 
+  h3,.h3 {      font-size: $fs4; } 
+  h4,.h4 {      font-size: $fs5; } 
+  h5,.h5 {      font-size: $fs6; } 
+  h6,.h6 {      font-size: $fs6; } 
+
+  .meta {       font-size: $fs6; }
+
+  blockquote.pullquote {
+    &, p {
+      font-size: $fs4;
+    }
+  }
+
+  .archive input { font-size: $fs3}
 }
-
-.archive input { font-size: $fs3}
-
-}
-
-
