@@ -937,6 +937,11 @@ footer {
     margin: 0 auto;
     float: none; }
 
+  blockquote {
+    margin-left: -15px; }
+    blockquote p {
+      margin-left: 13px; }
+
   footer {
     font-size: 16px; }
 

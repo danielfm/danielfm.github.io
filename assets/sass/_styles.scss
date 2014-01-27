@@ -731,7 +731,6 @@ footer {
 
 @media only screen and (max-width: 500px) {
   footer {
-    
     .social {
       display: none;
     }
@@ -870,6 +869,14 @@ footer {
     float: none;
   }
 
+  blockquote {
+    margin-left: -15px;
+
+    p {
+      margin-left: 13px;
+    }
+  }
+
   footer {
     font-size: $fs5;
   }
@@ -877,9 +884,4 @@ footer {
   small {
     font-size: $fs6;
   }
-
 }
-
-
-
-
