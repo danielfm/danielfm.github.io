@@ -273,7 +273,7 @@ code {
   overflow-x: auto; }
   .highlight code {
     font-family: "Monaco", "Courier New", "Courier";
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: inherit; }
     .highlight code .lineno {
       margin-right: 16.5px;
