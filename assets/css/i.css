@@ -273,7 +273,7 @@ code {
   overflow-x: auto; }
   .highlight code {
     font-family: "Monaco", "Courier New", "Courier";
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: inherit; }
     .highlight code .lineno {
       margin-right: 16.5px;
@@ -941,6 +941,9 @@ footer {
     margin-left: -15px; }
     blockquote p {
       margin-left: 13px; }
+
+  .highlight code {
+    font-size: 0.8em; }
 
   footer {
     font-size: 16px; }
