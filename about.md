@@ -16,7 +16,8 @@ weird ones), machine learning, and pretty much any computer magic stuff you
 might think of.
 
 I currently live in Rio de Janeiro, although I was born and grew up near São
-Paulo. When I'm not coding, I like to watch movies/TV series, play the guitarand have some beer (cachaça?) with my friends.
+Paulo. When I'm not coding, I like to watch movies/TV series, play the guitar
+and have some beer with my friends.
 
 Want to know more about my work and interests? Here's my
 [LinkedIn](http://linkedin.com/in/danielfmartins).
