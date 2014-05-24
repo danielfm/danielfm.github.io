@@ -9,15 +9,17 @@ image:
 ---
 
 My name is Daniel Martins and I'm a senior software engineer currently working at
-[globo.com](http://globo.com), the largest media conglomerate in Latin America.
+[globo.com](http://globo.com), the internet branch of the largest mass media
+group of Latin America.
 
-I'm passionate about open source software, programming languages (even the
-weird ones), machine learning, and pretty much any computer magic stuff you
+I'm passionate about open source software, programming languages (specially the
+weird ones), machine learning, and pretty much any computer science magic you
 might think of.
 
 I currently live in Rio de Janeiro, although I was born and grew up near São
-Paulo. When I'm not coding, I like to watch movies/TV series, play the guitar
+Paulo. When I'm not coding, I like to watch movies/TV shows, play the guitar
 and have some beer with my friends.
 
 Want to know more about my work and interests? Here's my
-[LinkedIn](http://linkedin.com/in/danielfmartins).
+[LinkedIn](http://linkedin.com/in/danielfmartins) and my
+[GitHub](https://github.com/danielfm).
