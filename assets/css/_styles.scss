@@ -35,6 +35,11 @@ em {
   background: #ffe8c0;
 }
 
+abbr {
+  border-bottom: .1em dotted;
+  cursor: help;
+}
+
 strong {
   font-weight: bold;
 }
