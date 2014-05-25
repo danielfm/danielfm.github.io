@@ -2,48 +2,16 @@
 layout: page
 permalink: /portfolio.html
 title: Featured Projects
+description:
+  visible: false
+  text: This is a comprehensive list containing some of my recent hacks and serious projects.
+tags: [daniel, martins, software engineer, globo.com, programming, open source, portfolio, projects]
 date: 2014-05-23 00:00
 image:
   feature: monalisa.jpg
 ---
 
-## +Combate
-
-![Combate.tv](/images/portfolio/combate-tv.png)
-
-Combate is a brazilian TV channel that has the rights to exclusively broadcast
-all editions of the UFC - the world's most popular MMA  competition - in
-brazilian territory.
-
-With +Combate, the channel subscribers enjoy instant and unlimited access - at
-no extra cost - to a constantly updated collection of duels, and can also watch
-the UFC live over the internet via smartphone, tablet or computer.
-
-Link (in portuguese): <http://combate.tv>
-
-### What Did I Do?
-
-I was the lead software engineer responsible for the VOD aspect of the project,
-and worked in pretty much everything from server configuration, coding, testing,
-release planning, and so on.
-
-### A Challenge?
-
-From a systems integration point of view, this was a very challenging project.
-The information was scattered through several APIs, some of them agonizingly
-slow, which in turn rendered the application nearly unusable in the first
-iterations.
-
-The performance problem was solved by combining a flexible caching system that
-supports both short and long-lived stale caching as fallback, agressive
-timeouts, and asynchronous client-side code to render non vital chunks of
-content.
-
-This gave us the ability to use different cache timeouts for different
-types of requests. The other benefit is that the system is now much more
-resilient against cascading failures.
-
-## Globosat Play
+## Globosat Play (2014)
 
 ![Globosat Play](/images/portfolio/globosat-play.png)
 
@@ -86,6 +54,42 @@ formatters) to a full-featured UX components toolkit a la
 
 It wasn't easy to convince the stakeholders this was the way to go, but the
 effort eventually paid off.
+
+## +Combate (2013)
+
+![Combate.tv](/images/portfolio/combate-tv.png)
+
+Combate is a brazilian TV channel that has the rights to exclusively broadcast
+all editions of the UFC - the world's most popular MMA  competition - in
+brazilian territory.
+
+With +Combate, the channel subscribers enjoy instant and unlimited access - at
+no extra cost - to a constantly updated collection of duels, and can also watch
+the UFC live over the internet via smartphone, tablet or computer.
+
+Link (in portuguese): <http://combate.tv>
+
+### What Did I Do?
+
+I was the lead software engineer responsible for the VOD aspect of the project,
+and worked in pretty much everything from server configuration, coding, testing,
+release planning, and so on.
+
+### A Challenge?
+
+From a systems integration point of view, this was a very challenging project.
+The information was scattered through several APIs, some of them agonizingly
+slow, which in turn rendered the application nearly unusable in the first
+iterations.
+
+The performance problem was solved by combining a flexible caching system that
+supports both short and long-lived stale caching as fallback, agressive
+timeouts, and asynchronous client-side code to render non vital chunks of
+content.
+
+This gave us the ability to use different cache timeouts for different
+types of requests. The other benefit is that the system is now much more
+resilient against cascading failures.
 
 ## Spare Time Hacks
 

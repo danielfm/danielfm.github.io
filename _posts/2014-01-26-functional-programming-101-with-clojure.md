@@ -1,7 +1,9 @@
 ---
 layout: post
 title: "Functional Programming 101 - With Clojure"
-description: Help Hercules defeat the Hydra. With functional programming.
+description:
+  visible: true
+  text: Help Hercules defeat the Hydra. With functional programming.
 date: 2014-01-26 10:00
 categories: [clojure, programming]
 comments: true
