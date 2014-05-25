@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Learning From Data - Course Review"
+title: Learning From Data - Course Review
 description:
   visible: true
   text: A must-have online course for beginners in machine learning.

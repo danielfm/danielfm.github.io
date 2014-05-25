@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Functional Programming 101 - With Clojure"
+title: Functional Programming 101 - With Clojure
 description:
   visible: true
   text: Help Hercules defeat the Hydra. With functional programming.
