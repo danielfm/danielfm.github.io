@@ -2,7 +2,6 @@
 layout: page
 permalink: /portfolio.html
 title: Featured Projects
-description: 
 date: 2014-05-23 00:00
 image:
   feature: monalisa.jpg
