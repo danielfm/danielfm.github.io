@@ -90,8 +90,8 @@ effort eventually paid off.
 
 ## Spare Time Hacks
 
-All the following hacks are [open source code](https://github.com/danielfm).
-Check them out if you want to know what my code looks like.
+All my hacks are [open source code](https://github.com/danielfm). Check them out
+if you want to know what my code looks like.
 
 ### photo-mosaic
 
@@ -130,8 +130,8 @@ The fun started by implementing the code that translates between bencode
 strings and Clojure's native data structures.
 
 With this done, I started reading the
-[metainfo file spec](http://www.bittorrent.org/beps/bep_0003.html)
-and thought it would be cool to write a tool to create _.torrent_ files,
+[metainfo file spec](http://www.bittorrent.org/beps/bep_0003.html) and
+thought it would be interesting to build a tool to create _.torrent_ files,
 just because.
 
 BitTorrent metainfo files are expensive to compute due to the constant piece
