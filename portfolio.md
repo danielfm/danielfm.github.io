@@ -27,7 +27,7 @@ Link (in portuguese): <http://globosatplay.globo.com>
 I was the lead engineer responsible for creating and deploying the software
 platform that's used to organize the VOD content of channels and TV shows.
 
-At this time, apart from the usual technical stuff, I had the oportunity to work
+Apart from the usual technical stuff, that time I had the oportunity to work
 more closely with the product owners to help them develop a viable release plan
 for the first iterations.
 
