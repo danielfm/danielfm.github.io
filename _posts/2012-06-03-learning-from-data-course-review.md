@@ -6,6 +6,7 @@ description:
   text: A must-have online course for beginners in machine learning.
 date: 2012-06-03 09:45
 categories: [machine learning, education, programming]
+tags: [machine learning, education, programming, matlab, octave, edx, online course]
 comments: true
 ---
 
