@@ -50,20 +50,23 @@ blockquote.pullquote {
 
 @media only screen and (max-width: $breakpoint-1-max-width) {
 
-  p {           
+  p {
     font-size: $fs5;
     line-height: $lhsmall;
   }
 
-  .intro {      
+  .intro {
     font-size: $fs4; 
     line-height: 1.4em;
   }
 
-  .post ul li {
-    font-size: $fs5;
-    line-height: $lhsmall;
-    margin-bottom: $lhsmall/2;
+  .post {
+    ol li, ul li {
+      font-size: $fs5;
+      line-height: $lhsmall;
+      margin-bottom: $lhsmall/2;
+      margin-left: $lh;
+    }
   }
 
   h1,.h1 {      font-size: $fs2; }
