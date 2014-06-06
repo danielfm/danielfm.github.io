@@ -8,6 +8,8 @@ categories:
 categories: [programming]
 tags: [functional programming, scheme, racket, continuations, call/cc]
 comments: true
+image:
+  feature: delorean.jpg
 ---
 
 If you at least spent some time reading about functional programming, there's
