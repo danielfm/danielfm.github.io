@@ -9,70 +9,74 @@ categories: [programming]
 tags: [functional programming, scheme, racket, continuations, call/cc]
 comments: true
 image:
-  feature: delorean.jpg
+  feature: continuations/delorean.jpg
 ---
 
-If you at least spent some time reading about functional programming, there's
-a change you might have stumbled upon a funny word, _continuation._
+> Continuations are the least understood of all control-flow constructs. This
+> lack of understanding (or awareness) is unfortunate, given that continuations
+> permit the programmer to implement powerful language features and algorithms.
+>
+> -- Matt Might, in [Continuations By Example](http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/)
 
-The fact that so few developers even heard about it probably means that it
-isn't some fundamental concept in programming languages, right?
+The usual way to control the flow of execution of a computer program is via
+procedure calls and returns; a [stack](http://en.wikipedia.org/wiki/Call_stack)
+data structure is how high-level programming languages keep track of the point
+to which each active subroutine should return control when it finishes
+executing.
 
-Well, I hope to show you it's actually quite the opposite; knowing what this
-little beast is - and how to use it - can be a nice addition to your toolbox.
-So, fasten your seatbelts, grab
-[Racket](http://racket-lang.org/), and let's go!
+Unfortunately, you'll need more than that if you intend to write useful
+programs to solve real-world problems. That's why most high-level programming
+languages also provide other control-flow primitives, like the `goto`
+statement, loops, and exception handling.
 
-## A First Example
+I'm not saying that implementing a programming language is an easy task, but
+putting that aside for a moment, it's like programming languages in general
+fight as hard as they can to make the call stack something as hidden and
+intangible as possible - something no one but itself are allowed to control.
 
-Suppose you want to write a predicate function that returns whether a given
-value is present in some list:
+What would happen if some programming languages, instead of keeping the call
+stack inside a 2" solid steel safe, actually gave the programmers the ability
+to "capture" them as functions that can be invoked, stored, and passed around
+as values?
 
-{% highlight scheme %}
-#lang racket/base
+In this post, I hope to show you what _continuations_ are and how they can be
+used in practical situations. So grab [Racket](http://racket-lang.org) and
+let's go!
 
-(define (contains? val lst)
-  (if (empty? lst)
-    #f
-    (if (equal? val (car lst))
-      #t
-      (contains? val (cdr lst)))))
+**Edit:** I've changed some things in this post in response to some great
+comments in this
+[Reddit discussion](http://www.reddit.com/r/scheme/comments/27gn0j/why_are_continuations_so_darn_cool/) and this
+[blog post](http://jecxjo.motd.org/code/blosxom.cgi/coding/explain_continuations)
+by jecxjo.
 
-;; Usage
-(contains? 2 '(8 6 9 7 6 8 1 2 3)) ;-> #t
-(contains? 5 '(8 6 9 7 6 8 1 2 3)) ;-> #f
-{% endhighlight %}
+## First Example
 
-This is a pretty straightfoward procedure that recursively consumes the list
-until it's exhausted, or the value is found.
+**Note:** The following problem is solvable without continuations, but I'd like
+to start with something simple enough.
 
-It's also a typical example of a
-[tail-recursive](http://en.wikipedia.org/wiki/Tail_call) procedure. For
-languages that support tail call optimization, the stack space requirements for
-such function are **constant**, whereas a similar implementation in other
-languages would require **linear** space.
-
-This procedure is simple enough that you don't have to worry about what's going
-on in the stack. However, there are situations where you'd want a finer control
-over the stack so it won't bite you in the ass.
-
-### Be Wary of Stack
-
-Now suppose you are writing code that interfaces with some API over HTTP.
-Also suppose this API requires a `SessionId` header to be sent over with the
-request in order to avoid
+Suppose you are writing code that interfaces with some API over HTTP. Also
+suppose this API requires a `SessionId` header to be sent over with the request
+in order to avoid
 [CSRF](http://en.wikipedia.org/wiki/Cross-site_request_forgery) attacks.
 
-{% highlight scheme %}
-;; Object to keep the session id across requests
+{% highlight racket %}
+#lang racket/base
+
+;; Object to keep the session-id across requests
 (struct session [id #:mutable])
 
 (define (perform-request! session method params)
-  (define headers  (session-id-header session))
+
+  ;; Performs the request
+  (define headers  (session-id-headers session))
   (define response (http-request API-URL headers method params))
+
+  ;; Retries the request with the given Session-Id
+  ;; if necessary
   (when (request-denied? response)
     (update-session-id! session response)
     (perform-request! session method params))
+
   (parse-json response))
 {% endhighlight %}
 
@@ -80,21 +84,26 @@ When the first request is sent - without the `SessionId` header - the server
 responds with an error, i.e. HTTP 409, in which case the procedure updates
 `session` with the session id given by the server and retries the request.
 
-The code looks good, except that it's **broken.**
+The code makes sense, but it's **broken.**
 
-This procedure is not tail-recursive so, when it's retried, another stack frame
-is pushed to the call stack and, even though the second request succeeded, what
-gets returned to the caller is the response to that first unauthorized request.
+The recursive call is not made in tail position. So, when it happens,
+another stack frame is pushed to the call stack and even though the retried
+request succeeds, what gets returned to the caller is the response to that
+first unauthorized request.
 
-If only we had the chance to return that second response right to the caller
+If only we had the chance to **return** that second response right to the caller
 instead of having the stack to unwind itself...
 
-{% highlight scheme %}
+{% highlight racket %}
 (define (perform-request! session method params)
   ;; ...
+
   (when (request-denied? response)
     (update-session-id! session response)
-    (return (perform-request! ...))) ; magic needed here
+
+    ;; Something like this
+    (return (perform-request! ...)))
+
   (parse-json response))
 {% endhighlight %}
 
@@ -106,19 +115,25 @@ of the program.
 
 Here's an example:
 
-{% highlight scheme %}
+{% highlight racket %}
+#lang racket/base
+
+;; We'll keep the captured continuation here
 (define cc #f)
 
+;; This function returns the value 3 *and* stores the
+;; continuation that represents the execution context
+;; in which this function was called
 (define (val!)
   (call/cc
    (lambda (k)
-     (set! cc k) ; stores the current continuation and returns 3
+     (set! cc k)
      3)))
 
-;; stored continuation for this expression is (+ 1 (* 2 ?))
+;; Stored continuation for this expression: (+ 1 (* 2 ?))
 (+ 1 (* 2 (val!))) ;-> 7
 
-;; "replays" the stored continuation with different arguments
+;; Replays the continuation with different arguments
 (cc 2) ;->  5, or (+ 1 (* 2 2))
 (cc 6) ;-> 13, or (+ 1 (* 2 6))
 {% endhighlight %}
@@ -126,14 +141,17 @@ Here's an example:
 It turns out that, if we rename `k` to `return`, this is exactly the thing
 we need in order to fix that broken API client example:
 
-{% highlight scheme %}
+{% highlight racket %}
 (define (perform-request! session method params)
   (let/cc return ; same as (call/cc (lambda (return) body...))
-    (define headers  ...)
-    (define response ...)
+    ;; ...
+
+    ;; Retries the request and gives the control
+    ;; back to the caller if request-denied?
     (when (request-denied? response)
       (update-session-id! session response)
       (return (perform-request! session method params)))
+
     (parse-json response)))
 {% endhighlight %}
 
@@ -149,9 +167,11 @@ This is a common use case of continuations. Check out
 [this project](https://github.com/danielfm/transmission-rpc-client) if you want
 to read the code that inspired this example.
 
-## Continuation-Based Generators
+## Generators
 
-If you are familiar with Python, you've probably seen code like this one:
+[Generators](http://en.wikipedia.org/wiki/Generator_(computer_programming)) can
+be viewed as special routines that behave like iterators. If you are familiar
+with Python, you've probably seen code like this one:
 
 {% highlight python %}
 def iterate(list):
@@ -167,71 +187,92 @@ it.next() # -> 1
 it.next() # -> raises StopIteration error
 {% endhighlight %}
 
-[Generators](http://en.wikipedia.org/wiki/Generator_(computer_programming)) can
-be viewed as special routines that behave like iterators.
-
 Do you see any resemblance between this example and the previous one? Although
 Python doesn't provide a `call/cc`-like facility in the language, one can argue
 that its generators are like a poor man's continuation.
 
 Let's pretend for a moment that Racket didn't have a
 [generator library](http://docs.racket-lang.org/reference/Generators.html)
-that does exactly this. How could this be implemented with continuations?
+that does exactly this. How could this be implemented Racket using
+continuations?
 
-{% highlight scheme %}
+What we need is a function that returns another function which, when called,
+yields one item at a time, until the list is exhausted.
+
+{% highlight racket %}
 (define (iterate lst)
+  (lambda ()
+    (let/cc return
+      (for-each
+       (lambda (item)
+         (return item))
+       lst))))
+
+;; Usage
+(define next (iterate (range 3)))
+(next) ;-> 0
+(next) ;-> 0
+{% endhighlight %}
+
+This code follows the same pattern as the previous ones, but it doesn't seem
+to work the way you might expect. The reason should be clear though: `iterate`
+returns a lambda that uses the captured continuation to yield the list's first
+item.
+
+To make this code work, we need to capture the current continuation from the
+inside of `for-each` and store it so it can be used to resume the computation
+when `next` is called again.
+
+{% highlight racket %}
+(define (iterate lst)
+
+  ;; Defines `state` as being a function that starts the
+  ;; iteration via `for-each`
   (define (state return)
     (for-each
      (lambda (item)
-       (let/cc item-cc
-         (set! state item-cc)
-         (return item)))
-      lst)
-     (return 'done))
 
-   (define (generator)
-     (call/cc state))
-  generator)
+       ;; Here, we capture the continuation that represents the
+       ;; current state of the iteration
+       (let/cc item-cc
+
+         ;; Before the item is yielded, we update `state` to
+         ;; `item-cc` so the computation is resumed the next
+         ;; time the generator is called
+         (set! state item-cc)
+
+         ;; Yields the current item to the caller
+         (return item)))
+     lst)
+
+    ;; Yields 'done when the list is exhausted
+    (return 'done))
+
+  ;; Returns a function that calls the stored `state` with the
+  ;; current continuation so we can yield one item at a time
+  (define (generator)
+    (call/cc state))
+    generator)
 
 ;; Usage
-(define next (iterate (range 2)))
+(define next (iterate '(0 1)))
 
 (next) ;-> 0
 (next) ;-> 1
 (next) ;-> 'done
 {% endhighlight %}
 
-This code is not that hard to follow. The trick is to treat the stack - I mean,
-a continuation - like a regular procedure which can be stored, invoked, and
-passed around as values.
+If you are having trouble understanding how this code works, the following
+diagram might help.
 
-What's happening is this:
-
-1. When `next` is called the first time, `state` is called with the current
-   continuation, which calls `for-each`, which in turn executes that lambda on
-   each item in `lst`.
-2. For each item, we update `state` with the continuation that is the snapshot
-   of that particular moment in the computation, and `return` the current value.
-3. The next time `next` is called, the new `state` will be called with the
-   current continuation, which will resume the computation and return the next
-   item in `lst`. This flow will continue until the every item in `lst` is
-   consumed.
-4. Finally, when no item is left in `lst`, we `return` the symbol `'done`.
+![Lombra](/images/continuations/generator.svg)
 
 ## Other Examples
 
-It seems that continuations can be used to implement a wide variety of advanced
-control constructs including non-local exits, exception handling, backtracking
-and [coroutines](http://en.wikipedia.org/wiki/Coroutine).
-
-That's not bad for some random unimportant only-theoretical programming
-language concept no one will ever need, right? :-)
-
-Now, moving along to more high level stuff, in
+Moving along to more high level stuff, in
 [this example](http://docs.racket-lang.org/more/index.html) Matthew Flatt
-explains how to build a continuation-based web server in Racket.
-
-Speaking of continuation-based-web-something, if you are into Smalltalk, don't
+explains how to build a continuation-based web server in Racket. Still in the
+realm of continuation-based-web-something, if you are into Smalltalk, don't
 forget to check [Seaside](http://www.seaside.st/), a web application framework
 that uses continuations to model multiple independent flows between different
 components.
@@ -239,3 +280,13 @@ components.
 If you don't code Scheme or Smalltalk for a living, don't worry. The chances
 are your language does support some flavor of continuations, either natively or
 via some third-party library.
+
+## Conclusion
+
+It seems that continuations can be used to implement a wide variety of advanced
+control constructs including non-local exits, exception handling, backtracking,
+and [coroutines](http://en.wikipedia.org/wiki/Coroutine).
+
+In this post, I hope to have clarified some of the key aspects about
+continuations. If you have any suggestion on how to improve this text, please
+let me know.
