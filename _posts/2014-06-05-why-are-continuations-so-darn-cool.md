@@ -43,8 +43,8 @@ In this post, I hope to show you what _continuations_ are and how they can be
 used in practical situations. So grab [Racket](http://racket-lang.org) and
 let's go!
 
-**Edit:** I've changed some things in this post in response to some great
-comments in this
+**Update (Jun 20, 2014):**  I've changed some things in this post in response
+to some great comments in this
 [Reddit discussion](http://www.reddit.com/r/scheme/comments/27gn0j/why_are_continuations_so_darn_cool/) and this
 [blog post](http://jecxjo.motd.org/code/blosxom.cgi/coding/explain_continuations)
 by jecxjo.
