@@ -4,14 +4,14 @@
   <g>
     <rect style="fill: #ffffff" x="171" y="164" width="80" height="36" rx="10" ry="10"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="171" y="164" width="80" height="36" rx="10" ry="10"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="211" y="185.9">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="211" y="185.9">
       <tspan x="211" y="185.9">state</tspan>
     </text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="350" y="253" width="101.6" height="36" rx="20" ry="20"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="350" y="253" width="101.6" height="36" rx="20" ry="20"/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="400.8" y="274.9">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="400.8" y="274.9">
       <tspan x="400.8" y="274.9">update state</tspan>
     </text>
   </g>
@@ -46,7 +46,7 @@
     <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="120" y="163">(next)</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="13,182 39.4973,182 39.4973,182 61.5316,182 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="13,182 39.4974,182 39.4974,182 61.5316,182 "/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="53.7677,187 63.7677,182 53.7677,177 "/>
     <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="32" y="162">(iterate)</text>
   </g>
@@ -61,11 +61,11 @@
     <ellipse style="fill: #000000" cx="322" cy="317" rx="10" ry="10"/>
   </g>
   <g>
-    <polygon style="fill: #ffffff" points="316,139 468.3,139 480.3,151 480.3,173 316,173 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="316,139 468.3,139 480.3,151 480.3,173 316,173 "/>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="468.3,139 468.3,151 480.3,151 "/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="323" y="163.9">
-      <tspan x="323" y="163.9">(set state item-cc)</tspan>
+    <polygon style="fill: #ffffff" points="316,139 476,139 488,151 488,173 316,173 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="316,139 476,139 488,151 488,173 316,173 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="476,139 476,151 488,151 "/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="323" y="163.9">
+      <tspan x="323" y="163.9">(set! state item-cc)</tspan>
     </text>
   </g>
   <g>
