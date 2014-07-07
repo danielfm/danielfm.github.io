@@ -252,7 +252,7 @@ when `next` is called again.
   ;; current continuation so we can yield one item at a time
   (define (generator)
     (call/cc state))
-    generator)
+  generator)
 
 ;; Usage
 (define next (iterate '(0 1)))
