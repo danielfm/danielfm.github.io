@@ -20,7 +20,9 @@ weird ones), machine learning, and pretty much any computer science magic you
 might think of.
 
 I currently live in Rio de Janeiro, although I was born and grew up near São
-Paulo. When I'm not coding, I like to watch movies/TV shows, play the guitar
+Paulo. When I'm not coding, I like to watch
+[movies/TV shows](https://trakt.tv/user/danielfmt),
+[play the guitar](https://soundcloud.com/daniel-fernandes-martins/)
 and have some beer with my friends.
 
 Please check my [portfolio](/portfolio.html) to see what I've been up to, or
