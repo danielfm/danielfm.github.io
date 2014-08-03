@@ -13,14 +13,20 @@ image:
 
 ## Globosat Play (2014)
 
-![Globosat Play](/images/portfolio/globosat-play.png)
+<div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
+  <div class="device">
+    <div class="screen">
+      <a href="http://play.com.br" target="_blank" title="Go to Globosat Play">
+        <img src="/images/portfolio/globosat-play.png"/>
+      </a>
+    </div>
+  </div>
+</div>
 
 Globosat Play is a "TV Everywhere" VOD service that cable TV subscribers can
 use to watch content licensed by [Globosat](http://en.wikipedia.org/wiki/Globosat)
 in Brazil - which includes movies, TV shows, documentaries and concerts - at
 no extra cost.
-
-Link (in portuguese): <http://globosatplay.globo.com>
 
 ### What Did I Do?
 
@@ -55,19 +61,25 @@ formatters) to a full-featured UX components toolkit a la
 It wasn't easy to convince the stakeholders this was the way to go, but the
 effort eventually paid off.
 
-## +Combate (2013)
+## Combate Play (2013)
 
-![Combate.tv](/images/portfolio/combate-tv.png)
+<div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
+  <div class="device">
+    <div class="screen">
+      <a href="http://combate.tv" target="_blank" title="Go to Combate Play">
+        <img src="/images/portfolio/combate-tv.png"/>
+      </a>
+    </div>
+  </div>
+</div>
 
 Combate is a brazilian TV channel that has the rights to exclusively broadcast
-all editions of the UFC - the world's most popular MMA  competition - in
+all editions of the UFC - The world's most popular MMA  competition - in
 brazilian territory.
 
-With +Combate, the channel subscribers enjoy instant and unlimited access - at
-no extra cost - to a constantly updated collection of duels, and can also watch
-the UFC live over the internet via smartphone, tablet or computer.
-
-Link (in portuguese): <http://combate.tv>
+With Combate Play, the channel subscribers enjoy instant and unlimited access -
+at no extra cost - to a constantly updated collection of duels, and can also
+watch the UFC live over the internet via smartphone, tablet or computer.
 
 ### What Did I Do?
 

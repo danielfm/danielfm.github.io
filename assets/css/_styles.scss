@@ -521,6 +521,11 @@ header.site-header nav {
     @include br(4px);
   }
   
+  .device-mockup .device .screen img {
+    margin: 0;
+    border-radius: 0;
+  }
+  
   ul {
     display: block;
     margin-bottom: $lh;
