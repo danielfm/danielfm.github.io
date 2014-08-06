@@ -28,3 +28,6 @@ and have some beer with my friends.
 Please check my [portfolio](/portfolio.html) to see what I've been up to, or
 visit my profile at [GitHub](https://github.com/danielfm) or
 [LinkedIn](http://linkedin.com/in/danielfmartins).
+
+If you're interested, [here](https://raw.githubusercontent.com/danielfm/resume/master/resume.pdf)'s
+my resume in PDF format.
