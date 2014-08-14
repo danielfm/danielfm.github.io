@@ -19,6 +19,11 @@ p {
   margin-bottom: $lh;
 }
 
+sup {
+  font-size: 0.6em;
+  vertical-align: super;
+}
+
 a, a:visited, a:active {
   color: $link;
   @include transit(all,0.25s,ease-in-out);
