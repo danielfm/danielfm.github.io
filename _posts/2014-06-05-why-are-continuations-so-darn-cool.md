@@ -265,7 +265,7 @@ when `next` is called again.
 If you are having trouble understanding how this code works, the following
 diagram might help.
 
-![Lombra](/images/continuations/generator.svg)
+![Diagram](/images/continuations/generator.svg)
 
 ## Other Examples
 
