@@ -4,12 +4,12 @@ title: A Week Of Docker
 description:
   visible: true
   text: Lessons learned after Dockerizing a simple Rails app.
-date: 2014-08-11 14:30
+date: 2014-08-15 11:50
 categories: [devops]
-tags: [docker, ruby, fig, programming, tips, deployment, development, environment]
-comments: false
+tags: [docker, fig, tips, deployment, environment]
+comments: true
 image:
-  feature: trying-docker/containers.jpg
+  feature: a-week-of-docker/containers.jpg
 ---
 
 If you got here, the chances are you heard the fuss around
@@ -32,20 +32,14 @@ some things I learned along the way.
 
 I few months ago I built [TeXBin](https://github.com/danielfm/texbin), a
 simple Rails application where you can post a `.tex` file and get a URL for its
-PDF version. The code was sitting in my laptop without being used, so I thought
-it would be nice to use it as a hello world project for Docker.
+PDF version. The code was sitting in my laptop without being used, so why not
+use it as guinea pig in my first attempt to use Docker? :-)
 
-The proposed stack is composed by three components: the application itself,
-a [MongoDB](http://mongodb.org) instance, and a [Nginx](http://nginx.org)
-server to both serve the static content and act as a reverse proxy to the
-application.
+The proposed stack is composed by three components: the application itself, a
+[MongoDB](http://mongodb.org) instance, and a [Nginx](http://nginx.org) server
+to both serve the static content and act as a reverse proxy to the application.
 
-![Architecture](/images/trying-docker/architecture.svg)
-
-Also, to make things simpler, let's assume that I will deploy this stack on a
-single server -- although it's possible to link containers living in different
-hosts by using
-[Ambassador Containers](https://docs.docker.com/articles/ambassador_pattern_linking/).
+![Architecture](/images/a-week-of-docker/architecture.svg)
 
 <blockquote class="pullquote">
 WTF is a container?
@@ -65,10 +59,10 @@ containers -- that _run processes in isolation_.
 > -- [Wikipedia](http://en.wikipedia.org/wiki/Docker_(software))
 
 So, in short, you get nearly all the benefits of virtualization with barely
-none of the overhead that comes with it.
+none of the execution overhead that comes with it.
 
 <blockquote class="pullquote">
-Why not put everything inside the same container?
+Why not put everything within the same container?
 </blockquote>
 
 You get several benefits by exposing the different components of your
@@ -83,11 +77,11 @@ freedom to _move the pieces around or add new pieces_ as we see fit, like:
 - change from a simple MongoDB instance to a
   [replica set](http://docs.mongodb.org/manual/replication/) composed by
   several containers across multiple hosts
-- spin up two or more containers of your application so you can perform
+- spin up two or more application containers so you can perform
   [blue-green deployments](http://martinfowler.com/bliki/BlueGreenDeployment.html),
   improve concurrency and resource usage, etc
 
-In other words: keep the moving parts, well, moving.
+In other words: it's a good idea to keep the moving parts, well, moving.
 
 ## The Dockerfile
 
@@ -99,7 +93,7 @@ reading the instructions from a `Dockerfile`, which is a text file that contains
 all the commands you would normally execute manually in order to build a Docker
 image.
 
-This is the application's Dockerfile:
+This is the application's `Dockerfile`:
 
 {% highlight bash %}
 # Base image (https://registry.hub.docker.com/_/ubuntu/)
@@ -142,8 +136,8 @@ isolated environment?
 
 The only reason you might want to do that is because you need to install a
 particular version of Ruby that you can't find via traditional OS package
-managers. If that's the case, go ahead and install the Ruby you want from the
-source code.
+managers. If that's the case, you'll be better off installing the Ruby version
+you want from the source code.
 
 Using RVM from within a Docker container is not a pleasant experience; every
 command must run inside a login shell session and you'll have problems using
@@ -152,14 +146,14 @@ command must run inside a login shell session and you'll have problems using
 ### 2<sup>nd</sup> Tip: Optimize for the Build Cache
 
 Docker stores intermediate images after successfully executing each command in
-the Dockerfile. This is a great feature; if any step fails along the way, you
-can fix the problem and the next build will reuse the cache up until that
-point.
+the `Dockerfile`. This is a great feature; if any step fails along the way, you
+can fix the problem and the next build will reuse the cache built up until that
+last successful command.
 
-Some instructions though, like `ADD`, aren't that cache friendly. That's
-why it's a good practice to only `ADD` stuff as late as possible as this
-invalidates the cache for all following instructions when there's any changes
-in the source files or their metadata.
+Instructions like `ADD` are not cache friendly though. That's why it's a good
+practice to only `ADD` stuff as late as possible in the `Dockerfile` since any
+changes in the files -- or their metadata -- will invalidate the build cache for
+all subsequent instructions.
 
 Which leaves us to...
 
@@ -168,28 +162,30 @@ Which leaves us to...
 A really important step is to avoid `ADD`ing irrelevant files to the
 container, like `README`, `fig.yml`, `.git/`, `logs/`, `tmp/`, and others.
 
-To avoid `ADD`ing files one by one, create a `.dockerignore` file and put there
-the patterns you want to ignore. This will help keep the build fast by
-decreasing the chance of cache busting.
+If you are familiar with `.gitignore`, the idea is the same: just create a
+`.dockerignore` file and put there the patterns you want to ignore. This wil
+help keep the image small and the build fast by decreasing the chance of cache
+busting.
 
 ## Testing the Images
 
-First, we'll need a container that exposes a single MongoDB server:
+To run the application, first we'll need a container that exposes a single
+MongoDB server:
 
 {% highlight bash %}
-$ docker run --name texbin_mongodb -d mongo
+$ docker run --name texbin_mongodb_1 -d mongo
 {% endhighlight %}
 
-To build the application image and start a new container:
+Then you have to build the application image and start a new container:
 
 {% highlight bash %}
 $ docker build -t texbin:dev .
-$ docker run --name texbin_test -d --link texbin_mongodb:mongodb -p 3000:3000 -v /texbin/app/public texbin:dev
+$ docker run --name texbin_app_1 -d --link texbin_mongodb_1:mongodb -p 3000:3000 texbin:dev
 {% endhighlight %}
 
 Learning how [container linking](https://docs.docker.com/userguide/dockerlinks/)
 and [volumes](https://docs.docker.com/userguide/dockervolumes/) work is
-essential if you want to understand what's going on.
+essential if you want to understand how to "plug" containers together.
 
 **Note:** The project also includes a `Dockerfile` for the
 [Nginx container](https://github.com/danielfm/texbin/tree/master/config/docker/nginx)
@@ -197,9 +193,9 @@ which I won't show here because it doesn't bring anything new to the table.
 
 Now `docker ps` should display two running containers. If everything's
 working, you should be able to access the application at
-<http://localhost:3000>. To see the logs, run `docker logs texbin_test`.
+<http://localhost:3000>. To see the logs, run `docker logs texbin_app_1`.
 
-![Screenshot](/images/trying-docker/screenshot.png)
+![Screenshot](/images/a-week-of-docker/screenshot.png)
 
 ## Docker in Development
 
@@ -215,15 +211,15 @@ mongodb:
 app:
   build: .
   ports:
-    - "3000:3000"
+    - 3000:3000
   links:
     - mongodb:mongodb
   volumes:
     - .:/texbin/app
 {% endhighlight %}
 
-Then, run `fig up -d` in the terminal in order to build the images, start the
-containers, and link them together.
+Then, run `fig up` in the terminal in order to build the images, start the
+containers, and link them.
 
 The only difference between this and the commands we ran manually before is
 that now we're mounting the hosts's current directory to container's
@@ -234,8 +230,9 @@ Try changing some `.html.erb` template and refreshing the browser.
 ## Defining New Environments
 
 The goal is to run the same application in production, but with a different
-configuration. A simple way to -- sort of -- solve this is by creating another
-image based on the previous one that changes the required configuration:
+configuration, right? A simple way to -- sort of -- solve this is by creating
+another image, based on the previous one, that changes the required
+configuration:
 
 {% highlight bash %}
 # Uses our previous image as base
@@ -262,35 +259,26 @@ If you know a better way to do this, please let me know in the comments.
 The first thing to do is to push your images to the server. There are plenty
 of ways to do that: [the public registry](https://registry.hub.docker.com/), a
 [private-hosted registry](https://github.com/docker/docker-registry), git, etc.
+Once the images are built, just repeat the procedure we did earlier and you're
+done.
 
-Once the images are built, just repeat the procedure we did earlier and
-you're done. However, as you probably know, deploying an application involves
-not only the deployment process itself, but also stuff like:
-
-### Managing Updates
-
-- How can I deploy new stuff without downtime?
-
-### Monitoring
-
-- Host machine monitoring (load, memory, I/O, network)
-- Are my containers up?
-- Are the services withing my containers up?
-
-### Logging
-
-- How can we see what's going on with my application?
-- How do I rotate and archive the logs?
-
-### Maintenance Tasks
-
-- How can I back up my data?
-- How can I run data migrations?
-
+But that's not everything. As you probably know, deploying an application
+involves [a lot more](http://www.oscon.com/oscon2014/public/schedule/detail/34136)
+than just moving stuff to some remote servers. This means you'll still have to
+worry with things like deployment automation, monitoring (at host and container
+levels), logging, data migrations and backup, etc.
 
 ## Conclusion
 
-- Docker does one thing, and does it well: processes running in isolation
-- Container orchestration is hard and error-prone if done by hand
-- Container linking are somewhat limited
-  - No default service discovery solution (ambassadors is still a hack)
+I'm glad I took the time to look at Docker. Despite its young age, it's a very
+impressive rapidly-evolving piece of technology with a lot of potential to
+radically change the DevOps landscape in the next couple of years.
+
+However, Docker solves only one variable of a huge equation. You'll still have
+to take care of boring things like monitoring, and I imagine it's rather
+difficult -- not to say impossible -- to use Docker in production without
+[some layer of automation](https://github.com/newrelic/centurion) on top of it.
+
+Also, features like container linking, are somewhat limited and we'll probably
+see substantial improvements in
+[future releases](https://github.com/docker/docker/milestones). So stay tuned!
