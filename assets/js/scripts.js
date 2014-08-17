@@ -25,7 +25,7 @@ $(function(){
 $(function() {
   $(window).scroll(function(evt) {
     var vpHeight = $(window).height();
-    var opacity  = (vpHeight - window.pageYOffset) / (vpHeight * 0.5);
+    var opacity  = (vpHeight - window.pageYOffset) / (vpHeight);
 
     if (opacity >= 0) {
       $(".article.big header").css({opacity: opacity});
