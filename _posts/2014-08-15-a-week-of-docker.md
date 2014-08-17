@@ -3,7 +3,7 @@ layout: post
 title: A Week Of Docker
 description:
   visible: true
-  text: Lessons learned after Dockerizing a simple Rails app.
+  text: Lessons learned after "Dockerizing" a Rails app.
 date: 2014-08-15 11:50
 categories: [devops]
 tags: [docker, fig, tips, deployment, environment]
