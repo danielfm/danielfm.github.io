@@ -192,10 +192,6 @@ header.site-header {
   z-index: 5000;
   @include background-gradient(rgba(0,0,0,.7), rgba(0,0,0,0));
 
-  &.darken {
-    @include background-gradient(rgba(255,255,255,.7), rgba(255,255,255,0));
-  }
-
   .wrap {
     max-width: 90vw;
   }
@@ -212,35 +208,6 @@ header.site-header {
   img {
     width: 25px;
     height: 25px;
-  }
-}
-
-#bump .darken {
-  a {
-    color: $black;
-    @include transit(all, .2s, ease-in-out);
-
-    &:hover {
-      color: $link;
-      @include transit(all, .2s, ease-in-out);
-    }
-  }
-  
-  .menu .icons {
-    color: $black;
-  }
-  
-  nav ul li a {
-    color: $black;
-
-    &:active {
-      color: $link;  
-    }
-
-    &:hover {
-      text-shadow: none;
-      color: $link;
-    }
   }
 }
 
@@ -309,7 +276,45 @@ header.site-header nav {
 .article {
   position: relative;
   margin-bottom: $lh;
-  
+
+  &.big {
+    .feature-wrapper {
+      height: 100vh;
+      max-height: 100%;
+    }
+
+    article {
+      margin-top: 100px;
+
+      header {
+        margin: 0;
+        position: absolute;
+        left: 0;
+        width: 100%;
+        top: 70vh;
+
+        h1, .intro {
+          font-style: normal;
+        }
+
+        h1 {
+          padding: 0;
+          margin: 0;
+          font-weight: bolder;
+          color: #fff;
+        }
+
+        .intro {
+          padding: 0;
+          margin: 0;
+          text-align: center;
+          font-style: italic;
+          color: rgba(255,255,255,0.8);
+        }
+      }
+    }
+  }
+
   .feature-wrapper {
     height: 40vw;
     overflow: hidden;
@@ -318,15 +323,6 @@ header.site-header nav {
     height: 40vw;
     max-height: 50vh;
     width: 100%;
-
-    &.big {
-      height: 100vh;
-      max-height: 100%;
-    }
-
-    &.lighter {
-      background: #fff;
-    }
   }
 
   .featured-image {
@@ -472,9 +468,6 @@ header.site-header nav {
 // Post Formatting
 
 .post {
-  
-  min-height: 500px;
-  
   .deets {
     position: relative;
     top: 45px;
@@ -599,7 +592,7 @@ header.site-header nav {
 
 /* Footer Stuff */
 .push {
-  height: $footerHeight/4 !important;
+  height: $footerHeight/4;
 }
 
 footer {
@@ -721,8 +714,22 @@ footer {
   
 // Type Fixes
 
-  h1 {
-    font-size: $fs2;
+  .article {
+    &.big {
+      article {
+        header {
+          top: 75vh;
+
+          h1 {
+            font-size: $fs2;
+          }
+
+          p.intro {
+            font-size: $fs4;
+          }
+        }
+      }
+    }
   }
 
   footer {
@@ -736,7 +743,6 @@ footer {
     
     .social {
       right: 10vw;
-
     }
   }
 }
@@ -745,6 +751,36 @@ footer {
    ========================================================================== */
 
 @media only screen and (max-width: 500px) {
+
+  .push {
+    height: 0;
+  }
+
+  .article {
+    &.big {
+      .feature-wrapper {
+        height: 65vh;
+      }
+
+      article {
+        margin-top: 50px;
+
+        header {
+          top: 50vh;
+
+          h1 {
+            font-size: $fs3;
+          }
+
+          p.intro {
+            font-size: $fs5;
+            color: rgba(255,255,255,0.85);
+          }
+        }
+      }
+    }
+  }
+
   footer {
     .social {
       display: none;
@@ -851,26 +887,6 @@ footer {
 
     &:hover {
       text-shadow: none;
-    }
-  }
-  
-  #bump .darken nav ul {
-    padding: 0;
-    margin-top: 40px;
-    background: $black;
-  }
-  
-  #bump .darken nav ul li a {
-    color: $white;
-
-    &:active {
-      background-color: $link;
-    }
-
-    &:hover {
-      text-shadow: none;
-      color: $white;
-      background-color: $link;
     }
   }
 }

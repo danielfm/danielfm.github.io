@@ -1,11 +1,11 @@
 ---
-layout: page
+layout: page_bigcover
 permalink: /about.html
-title: Who am I?
+title: Daniel Martins
 date: 2012-04-01 22:00
 description:
-  visible: false
-  text: I’m a senior software engineer currently working at globo.com, the internet branch of the largest mass media group of Latin America.
+  visible: true
+  text: Software Engineer &#10025; Open Source Enthusiast &#10025; Guitarist
 tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   feature: about.jpg
@@ -29,5 +29,4 @@ Please check my [portfolio](/portfolio.html) to see what I've been up to, or
 visit my profile at [GitHub](https://github.com/danielfm) or
 [LinkedIn](http://linkedin.com/in/danielfmartins).
 
-If you're interested, [here](https://raw.githubusercontent.com/danielfm/resume/master/resume.pdf)'s
-my resume in PDF format.
+Resume: [pdf](https://raw.githubusercontent.com/danielfm/resume/master/resume.pdf)
