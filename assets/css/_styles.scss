@@ -383,8 +383,9 @@ header.site-header nav {
       color: $black;
       position: relative;
       text-align: center;
-      width: 100%;
+      width: auto;
       margin-top: 0;
+      margin: 0 20px;
 
       .date {
         font-family: $sans;
@@ -804,7 +805,7 @@ footer {
         margin-top: 50px;
 
         header {
-          top: 50vh;
+          top: 45vh;
 
           h1 {
             font-size: $fs3;
