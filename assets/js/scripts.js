@@ -21,3 +21,14 @@ $(function(){
     setTimeout(function(){ t.addClass('slider'); }, (i+1) * 330);
   });
 });
+
+$(function() {
+  $(window).scroll(function(evt) {
+    var vpHeight = $(window).height();
+    var opacity  = (vpHeight - window.pageYOffset) / (vpHeight * 0.5);
+
+    if (opacity >= 0) {
+      $(".article.big header").css({opacity: opacity});
+    }
+  });
+});
