@@ -4,7 +4,7 @@ permalink: /portfolio.html
 title: Featured Projects
 description:
   visible: true
-  text: So, are you interested about my work? Go ahead, take a look!
+  text: So, are you interested in my work? Go ahead, take a look!
 tags: [daniel, martins, software engineer, globo.com, programming, open source, portfolio, projects]
 date: 2014-05-23 00:00
 image:
