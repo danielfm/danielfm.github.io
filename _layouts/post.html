@@ -1,17 +1,13 @@
 {% if page.image.feature %}
 
-  {% if page.image.lighter %}
-    {% include head.html header_class="darken" %}
-  {% else %}
-    {% include head.html %}
-  {% endif %}
+  {% include head.html %}
 
   <section class="article">
     <div class="feature-wrapper {% if page.image.big %}big{% endif %} {% if page.image.lighter %}lighter{% endif %}">
       <div class="featured-image" style="background-image: url({{ site.url }}/images/{{ page.image.feature }})"></div>
     </div>
 {% else %}
-  {% include head.html header_class="darken" %}
+  {% include head.html header_class="no-cover" %}
 
   <section class="article pad-top">
 

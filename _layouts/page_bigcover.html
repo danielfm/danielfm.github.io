@@ -1,17 +1,13 @@
 {% if page.image.feature %}
 
-{% if page.image.lighter %}
-  {% include head.html header_class="darken" %}
-{% else %}
   {% include head.html %}
-{% endif %}
 
 <section class="article big">
 
   {% include feature.html lighter=page.image.lighter filename=page.image.feature %}
 {% else %}
 
-{% include head.html header_class="darken" %}
+{% include head.html header_class="no-cover" %}
 
 <section class="article pad-top">
 
