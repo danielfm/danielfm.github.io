@@ -5,7 +5,7 @@ title: Daniel Martins
 date: 2012-04-01 22:00
 description:
   visible: true
-  text: Software Engineer &#10025; Open Source Enthusiast &#10025; Guitarist
+  text: Software Engineer &#10031; Open Source Enthusiast &#10031; Guitarist
 tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   feature: about.jpg
