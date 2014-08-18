@@ -875,6 +875,10 @@ footer {
 
 @media only screen and (max-width : 680px) {
 
+  header.site-header nav {
+    @include background-gradient(rgba(0,0,0,0), rgba(0,0,0,.8));
+  }
+
   #bump .no-cover nav ul {
     padding: 0;
     margin-top: 40px;
