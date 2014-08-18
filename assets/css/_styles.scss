@@ -792,11 +792,10 @@ footer {
 /* Mobile
    ========================================================================== */
 
-@media only screen and (max-width: 500px) {
-
+@media only screen and (max-width: 640px) {
   .push {
     height: 0;
-  }
+  }  
 
   .article {
     &.big {
@@ -808,10 +807,40 @@ footer {
         margin-top: 50px;
 
         header {
-          top: 32vh;
+          top: 20vh;
 
           h1 {
             font-size: $fs3;
+          }
+
+          .date {
+            margin: 3px 0;
+          }
+
+          p.intro {
+            font-size: $fs5;
+            color: rgba(255,255,255,0.85);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: $breakpoint-1-max-width) {
+
+  .article {
+    &.big {
+      article {
+        header {
+          top: 30vh;
+
+          h1 {
+            font-size: $fs4;
+          }
+
+          .date {
+            margin: 15px 0;
           }
 
           p.intro {
