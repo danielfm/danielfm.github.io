@@ -7,7 +7,7 @@ description:
 categories: 
 categories: [programming]
 tags: [functional programming, scheme, racket, continuations, call/cc]
-comments: true
+comments: false
 image:
   feature: continuations/delorean.jpg
 ---

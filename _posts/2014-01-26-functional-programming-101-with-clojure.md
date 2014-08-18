@@ -7,7 +7,7 @@ description:
 date: 2014-01-26 10:00
 categories: [programming]
 tags: [clojure, programming, challenge, haskell, sicp]
-comments: true
+comments: false
 image:
   feature: functional-programming-101.jpg
 ---
