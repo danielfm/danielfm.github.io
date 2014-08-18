@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: post_bigcover
 title: Why Are Continuations So Darn Cool?
 description:
   visible: true

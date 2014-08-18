@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: post_bigcover
 title: Functional Programming 101 - With Clojure
 description:
   visible: true
