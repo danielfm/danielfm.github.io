@@ -807,13 +807,14 @@ footer {
         margin-top: 50px;
 
         header {
-          top: 20vh;
+          top: 25vh;
 
           h1 {
-            font-size: $fs3;
+            font-size: $fs4;
           }
 
           .date {
+            font-size: $fs6;
             margin: 3px 0;
           }
 
@@ -834,10 +835,6 @@ footer {
       article {
         header {
           top: 30vh;
-
-          h1 {
-            font-size: $fs4;
-          }
 
           .date {
             margin: 15px 0;
