@@ -155,7 +155,7 @@ practice to only `ADD` stuff as late as possible in the `Dockerfile` since any
 changes in the files -- or their metadata -- will invalidate the build cache for
 all subsequent instructions.
 
-Which leaves us to...
+Which leads us to...
 
 ### 3<sup>rd</sup> Tip: Don't Forget the `.dockerignore`
 
