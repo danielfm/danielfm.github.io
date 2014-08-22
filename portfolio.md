@@ -123,7 +123,7 @@ generate the picture yourself:
 {% highlight matlab %}
 % Quad-Spiral Valley (scale: 1/400, iterations: 512)
 M = mandelbrot (0.283+0.484i, 400, 512, 1280, 800);
-imwrite (M, bone (512), 'output.png');
+imwrite (M, bone (512), 'output.jpg', 'Quality', 100);
 {% endhighlight %}
 
 ### photo-mosaic
