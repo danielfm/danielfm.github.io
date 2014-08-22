@@ -8,7 +8,7 @@ description:
 tags: [daniel, martins, software engineer, globo.com, programming, open source, portfolio, projects]
 date: 2014-05-23 00:00
 image:
-  feature: portfolio.png
+  feature: portfolio.jpg
 ---
 
 ## Globosat Play (2014)
@@ -110,10 +110,21 @@ if you want to know what my code looks like.
 
 ### mandelbrot
 
-This page's cover picture was created using
+This page's cover picture was generated using
 [a simple function](https://gist.github.com/danielfm/0e83487fc4a5dfa6884f) I
-wrote in Octave when reading about [Fractals](http://en.wikipedia.org/wiki/Fractal),
-which is a rather fascinating subject.
+wrote in Octave after reading a little bit about
+[Fractals](http://en.wikipedia.org/wiki/Fractal), which is a rather fascinating
+subject.
+
+The region of the Mandelbrot Set depicted here -- around `.283+.484i` -- is
+known as [Quad-Spiral Valley](http://www.nahee.com/Derbyshire/manguide.html). To
+generate the picture yourself:
+
+{% highlight matlab %}
+% Quad-Spiral Valley (scale: 1/400, iterations: 512)
+M = mandelbrot (0.283+0.484i, 400, 512, 1280, 800);
+imwrite (M, bone (512), 'output.png');
+{% endhighlight %}
 
 ### photo-mosaic
 
