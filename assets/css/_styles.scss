@@ -191,7 +191,7 @@ header.site-header {
   position: absolute;
   width: 100%;
   z-index: 5000;
-  @include background-gradient(rgba(0,0,0,.7), rgba(0,0,0,0));
+  @include background-gradient(rgba(0,0,0,.5), rgba(0,0,0,0));
 
   &.no-cover {
     background: none;
@@ -876,7 +876,7 @@ footer {
 @media only screen and (max-width : 680px) {
 
   header.site-header nav {
-    @include background-gradient(rgba(0,0,0,0), rgba(0,0,0,.8));
+    @include background-gradient(rgba(0,0,0,0), rgba(0,0,0,.5));
   }
 
   #bump .no-cover nav ul {
