@@ -8,7 +8,7 @@ description:
 tags: [daniel, martins, software engineer, globo.com, programming, open source, portfolio, projects]
 date: 2014-05-23 00:00
 image:
-  feature: monalisa.jpg
+  feature: portfolio.png
 ---
 
 ## Globosat Play (2014)
@@ -108,6 +108,13 @@ resilient against cascading failures.
 All my hacks are [open source code](https://github.com/danielfm). Check them out
 if you want to know what my code looks like.
 
+### mandelbrot
+
+This page's cover picture was created using
+[a simple function](https://gist.github.com/danielfm/0e83487fc4a5dfa6884f) I
+wrote in Octave when reading about [Fractals](http://en.wikipedia.org/wiki/Fractal),
+which is a rather fascinating subject.
+
 ### photo-mosaic
 
 Although the input and target images can be customized, the goal of this hack
@@ -115,8 +122,8 @@ was to paint [Mona Lisa](http://en.wikipedia.org/wiki/Mona_Lisa) using a corpus
 of 3,588 images of Pablo Picasso's paintings and drawings as pixels in the
 target image.
 
-This page's cover picture was created from the resulting 13,960x20,800 JPEG
-file which can be downloaded from the project's repository as a 7zip archive.
+The resulting, a 13,960x20,800 JPEG file, can be downloaded from the project's
+repository as a 7zip archive.
 
 Link: <https://github.com/danielfm/photo-mosaic>
 
