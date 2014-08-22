@@ -117,8 +117,8 @@ wrote in Octave after reading a little bit about
 subject.
 
 The region of the Mandelbrot Set depicted here -- around `.283+.484i` -- is
-known as [Quad-Spiral Valley](http://www.nahee.com/Derbyshire/manguide.html). To
-generate the picture yourself:
+known as the [Quad-Spiral Valley](http://www.nahee.com/Derbyshire/manguide.html).
+To generate the picture yourself:
 
 {% highlight matlab %}
 % Quad-Spiral Valley (scale: 1/400, iterations: 512)
