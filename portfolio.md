@@ -116,9 +116,10 @@ wrote in Octave after reading a little bit about
 [Fractals](http://en.wikipedia.org/wiki/Fractal), which is a rather fascinating
 subject.
 
-The region of the Mandelbrot Set depicted here -- around `.283+.484i` -- is
-known as the [Quad-Spiral Valley](http://www.nahee.com/Derbyshire/manguide.html).
-To generate the picture yourself:
+The region of the [Mandelbrot Set](http://en.wikipedia.org/wiki/Mandelbrot_set)
+depicted here -- around `.283+.484i` -- is known as the
+[Quad-Spiral Valley](http://www.nahee.com/Derbyshire/manguide.html). To generate
+the picture yourself:
 
 {% highlight matlab %}
 % Quad-Spiral Valley (scale: 1/400, iterations: 512)
