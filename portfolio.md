@@ -124,7 +124,10 @@ depicted here -- around `.283+.484i` -- is known as the
 the picture yourself:
 
 {% highlight matlab %}
-% Quad-Spiral Valley (workers: 4, scale: 1/400, iterations: 512)
+% Loads the parallel package (make sure to have it installed first)
+pkg load parallel
+
+% Quad-Spiral Valley (scale: 1/400, iterations: 512, workers: 4)
 M = mandelbrot (0.283+0.484i, 400, 512, 1280, 800, 4);
 imwrite (M, copper (512), 'output.jpg', 'Quality', 100);
 {% endhighlight %}
