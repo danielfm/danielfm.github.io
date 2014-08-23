@@ -122,10 +122,17 @@ depicted here -- around `.283+.484i` -- is known as the
 the picture yourself:
 
 {% highlight matlab %}
-% Quad-Spiral Valley (scale: 1/400, iterations: 512)
-M = mandelbrot (0.283+0.484i, 400, 512, 1280, 800);
+% Quad-Spiral Valley (workers: 4, scale: 1/400, iterations: 512)
+M = mandelbrot (0.283+0.484i, 400, 512, 1280, 800, 4);
 imwrite (M, copper (512), 'output.jpg', 'Quality', 100);
 {% endhighlight %}
+
+#### Why is it cool?
+
+Even though Octave doesn't support threads, I've used the
+[parallel](http://octave.sourceforge.net/parallel/overview.html) package in
+order to compute the pixel intensity values in parallel by dividing the
+work into `N` jobs and submitting them to child processes spawned via `fork()`.
 
 ### photo-mosaic
 
