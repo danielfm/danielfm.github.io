@@ -11,7 +11,9 @@ image:
   feature: portfolio.jpg
 ---
 
-## Globosat Play (2014)
+## Professional Projects
+
+### Globosat Play
 
 <div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
   <div class="device">
@@ -23,12 +25,12 @@ image:
   </div>
 </div>
 
-Globosat Play is a "TV Everywhere" VOD service that cable TV subscribers can
+**2014 -** Globosat Play is a "TV Everywhere" VOD service that cable TV subscribers can
 use to watch content licensed by [Globosat](http://en.wikipedia.org/wiki/Globosat)
 in Brazil - which includes movies, TV shows, documentaries and concerts - at
 no extra cost.
 
-### What Did I Do?
+#### What Did I Do?
 
 I was the lead engineer responsible for creating and deploying the software
 platform that's used to organize the VOD content of channels and TV shows.
@@ -37,7 +39,7 @@ Apart from the usual technical stuff, that time I had the opportunity to work
 more closely with the product owners to help them develop a viable release plan
 for the first iterations.
 
-### A Challenge?
+#### A Challenge?
 
 In order to be able to meet the agressive deadlines and scale the project across
 multiple teams, we decided early on to divide this big product into different
@@ -61,7 +63,7 @@ formatters) to a full-featured UX components toolkit a la
 It wasn't easy to convince the stakeholders this was the way to go, but the
 effort eventually paid off.
 
-## Combate Play (2013)
+### Combate Play
 
 <div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
   <div class="device">
@@ -73,7 +75,7 @@ effort eventually paid off.
   </div>
 </div>
 
-Combate is a brazilian TV channel that has the rights to exclusively broadcast
+**2013 -** Combate is a brazilian TV channel that has the rights to exclusively broadcast
 all editions of the UFC - The world's most popular MMA  competition - in
 brazilian territory.
 
@@ -81,13 +83,13 @@ With Combate Play, the channel subscribers enjoy instant and unlimited access -
 at no extra cost - to a constantly updated collection of duels, and can also
 watch the UFC live over the internet via smartphone, tablet or computer.
 
-### What Did I Do?
+#### What Did I Do?
 
 I was the lead software engineer responsible for the VOD aspect of the project,
 and worked in pretty much everything from server configuration, coding, testing,
 release planning, and so on.
 
-### A Challenge?
+#### A Challenge?
 
 From a systems integration point of view, this was a very challenging project.
 The information was scattered through several APIs, some of them agonizingly
