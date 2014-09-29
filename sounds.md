@@ -13,7 +13,7 @@ image:
 
 Besides programming, I have a passion for **music**. For me, music is the
 closest thing to magic there is: the ability to make people laugh, cry, have
-goosebumps. All through sound.
+goosebumps.
 
 Here you can hear some of the recordings I've made at home over the years with
 a pretty simplistic setup: a guitar, a USB audio interface, and a MacBook
