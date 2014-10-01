@@ -30,7 +30,7 @@ the artists themselves look like douches.
 
 ### Pink Floyd
 
-#### "Shine On You Crazy Diamond" (Still Not Final)
+#### "Shine On You Crazy Diamond"
 
 <p>
   <audio controls>
