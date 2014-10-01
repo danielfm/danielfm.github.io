@@ -56,7 +56,7 @@ Equipment used:
 * Fender Stratocaster American Standard
 * Tanglewood Speedbar capo
 * Tascam US-100 USB audio interface
-* MacBook Air 11-inch with Garage Band
+* MacBook Air with Garage Band
 
 ### Other Bands
 
