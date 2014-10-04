@@ -5,7 +5,7 @@ title: Shine On You Crazy Diamond
 date: 2012-04-01 22:00
 description:
   visible: false
-  text: Guitar cover of "Shine On You Crazy Diamond", by Pink Floyd.
+  text: 'Guitar cover of "Shine On You Crazy Diamond", by Pink Floyd.'
 tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   feature: sounds/pink-floyd-2.jpg
