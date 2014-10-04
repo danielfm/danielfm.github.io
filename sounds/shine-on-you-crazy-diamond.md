@@ -8,12 +8,16 @@ description:
   text: Guitar cover of "Shine On You Crazy Diamond", from Pink Floyd's "Wish You Were Here" album.
 tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
+  opengraph: sounds/cover/wish-you-were-here.jpg
   feature: sounds/syd-barrett.jpg
+song:
+  url: https://s3.amazonaws.com/danielmartins-blog/sounds/shine-on-you-crazy-diamond.mp3
+  duration: 803
 ---
 
 <p>
   <audio controls>
-    <source src="https://s3.amazonaws.com/danielmartins-blog/sounds/shine-on-you-crazy-diamond.mp3" type="audio/mpeg">
+    <source src="{{ page.song.url }}" type="audio/mpeg">
   </audio>
 </p>
 
