@@ -11,7 +11,7 @@ image:
   opengraph: sounds/cover/wish-you-were-here.jpg
   feature: sounds/syd-barrett.jpg
 song:
-  url: https://s3.amazonaws.com/danielmartins-blog/sounds/shine-on-you-crazy-diamond.mp3
+  url: "https://s3.amazonaws.com/danielmartins-blog/sounds/shine-on-you-crazy-diamond.mp3"
   duration: 803
 ---
 
