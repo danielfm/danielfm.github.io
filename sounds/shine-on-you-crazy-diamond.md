@@ -16,7 +16,7 @@ song:
 ---
 
 <p>
-  <audio controls>
+  <audio controls preload="none">
     <source src="{{ page.song.url }}" type="audio/mpeg">
   </audio>
 </p>
