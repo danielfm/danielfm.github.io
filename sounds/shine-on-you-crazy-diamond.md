@@ -36,6 +36,6 @@ Backing track [here](http://www.guitarbackingtrack.com/play/pink_floyd/shine_on_
 
 ## Equipment
 
-* [Fender Stratocaster American Standard](http://www.fender.com/series/american-standard/american-standard-stratocaster-maple-fingerboard-black/)
+* Fender American Standard Stratocaster
 * Tascam US-100 USB audio interface
 * MacBook Air with Garage Band
