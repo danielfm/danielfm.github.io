@@ -1,14 +1,14 @@
 ---
-layout: page
+layout: page_bigcover
 permalink: /sounds/shine-on-you-crazy-diamond.html
 title: Shine On You Crazy Diamond
 date: 2012-04-01 22:00
 description:
-  visible: false
-  text: 'Guitar cover of "Shine On You Crazy Diamond", by Pink Floyd.'
+  visible: true
+  text: Guitar cover of "Shine On You Crazy Diamond", from Pink Floyd's "Wish You Were Here" album.
 tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
-  feature: sounds/pink-floyd-2.jpg
+  feature: sounds/syd-barrett.jpg
 ---
 
 <p>
