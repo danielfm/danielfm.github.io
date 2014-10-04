@@ -5,7 +5,7 @@ title: Sounds
 date: 2012-04-01 22:00
 description:
   visible: true
-  text: This is the place where my guitar gently weeps...
+  text: This is the place where my guitar gently weeps... \m/
 tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   feature: sounds/main.jpg
