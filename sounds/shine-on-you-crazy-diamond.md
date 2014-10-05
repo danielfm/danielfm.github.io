@@ -2,7 +2,7 @@
 layout: page_bigcover
 permalink: /sounds/shine-on-you-crazy-diamond.html
 title: Shine On You Crazy Diamond
-date: 2012-04-01 22:00
+date: 2014-10-04 10:00
 description:
   visible: true
   text: Guitar cover of "Shine On You Crazy Diamond", from Pink Floyd's "Wish You Were Here" album.
