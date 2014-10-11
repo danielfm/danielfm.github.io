@@ -11,14 +11,12 @@ image:
   opengraph: sounds/cover/back-in-black.jpg
   feature: sounds/angus-young.jpg
 song:
-  url: "https://s3.amazonaws.com/danielmartins-blog/sounds/back-in-black.mp3"
+  url: "http://clyp.it/vafml5v3.mp3"
   duration: 255
 ---
 
 <p>
-  <audio controls preload="none">
-    <source src="{{ page.song.url }}" type="audio/mpeg">
-  </audio>
+<iframe width="100%" height="160" src="http://clyp.it/vafml5v3/widget" frameborder="0"></iframe>
 </p>
 
 This song needs no introduction, and since I own a Gibson SG myself, I really

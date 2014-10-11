@@ -11,14 +11,12 @@ image:
   opengraph: sounds/cover/wish-you-were-here.jpg
   feature: sounds/syd-barrett.jpg
 song:
-  url: "https://s3.amazonaws.com/danielmartins-blog/sounds/shine-on-you-crazy-diamond.mp3"
+  url: "http://clyp.it/loqo2ojy.mp3"
   duration: 803
 ---
 
 <p>
-  <audio controls preload="none">
-    <source src="{{ page.song.url }}" type="audio/mpeg">
-  </audio>
+<iframe width="100%" height="160" src="http://clyp.it/loqo2ojy/widget" frameborder="0"></iframe>
 </p>
 
 One of the main reasons why I bought myself a Fender Strat was to be able to get
