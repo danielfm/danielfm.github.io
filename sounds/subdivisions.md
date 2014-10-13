@@ -5,7 +5,7 @@ title: Subdivisions
 date: 2014-10-12 21:00
 description:
   visible: true
-  text: Guitar cover of "Subdivisions", Rush's "Signal" album.
+  text: Guitar cover of "Subdivisions", from Rush's "Signal" album.
 tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   opengraph: sounds/cover/signals.jpg
