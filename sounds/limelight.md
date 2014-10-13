@@ -6,7 +6,6 @@ date: 2014-10-12 21:00
 description:
   visible: true
   text: Guitar cover of "Limelight", from Rush's most famous album "Moving Pictures".
-tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   opengraph: sounds/cover/moving-pictures.jpg
   feature: sounds/alex-lifeson.jpg

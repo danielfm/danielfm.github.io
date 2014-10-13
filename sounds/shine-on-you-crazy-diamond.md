@@ -6,7 +6,6 @@ date: 2014-10-04 10:00
 description:
   visible: true
   text: Guitar cover of "Shine On You Crazy Diamond", from Pink Floyd's "Wish You Were Here" album.
-tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   opengraph: sounds/cover/wish-you-were-here.jpg
   feature: sounds/syd-barrett.jpg

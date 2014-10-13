@@ -6,7 +6,6 @@ date: 2014-10-05 19:00
 description:
   visible: true
   text: Guitar cover of "Back In Black", one of the many timeless classics from AC/DC.
-tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   opengraph: sounds/cover/back-in-black.jpg
   feature: sounds/angus-young.jpg

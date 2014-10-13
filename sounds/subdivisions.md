@@ -6,7 +6,6 @@ date: 2014-10-12 21:00
 description:
   visible: true
   text: Guitar cover of "Subdivisions", from Rush's "Signals" album.
-tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   opengraph: sounds/cover/signals.jpg
   feature: sounds/alex-lifeson-3.jpg

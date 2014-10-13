@@ -6,7 +6,6 @@ date: 2014-10-12 21:00
 description:
   visible: true
   text: Guitar cover of "Red Barchetta", one of my favourite songs from Rush's "Moving Pictures" album.
-tags: [daniel, martins, software engineer, globo.com, programming, open source, about, who is]
 image:
   opengraph: sounds/cover/moving-pictures.jpg
   feature: sounds/alex-lifeson-2.jpg
