@@ -31,4 +31,4 @@ the artists themselves look like douches.
 2. [Pink Floyd -- Shine On You Crazy Diamond](/sounds/shine-on-you-crazy-diamond.html)
 3. [Rush -- Limelight](/sounds/limelight.html)
 4. [Rush -- Red Barchetta](/sounds/red-barchetta.html)
-5. [Rush - Subdivisions](/sounds/subdivisions.html)
+5. [Rush -- Subdivisions](/sounds/subdivisions.html)
