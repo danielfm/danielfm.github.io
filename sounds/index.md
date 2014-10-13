@@ -19,6 +19,10 @@ Here you can hear some of the recordings I've made at home over the years with
 a pretty simplistic setup: a guitar, a USB audio interface, and a MacBook
 with Garage Band.
 
+(I'm in the process of moving out of SoundCloud, so you can still hear
+some of my old recordings
+[there](https://soundcloud.com/daniel-fernandes-martins).)
+
 _Quick note:_ I'm not a musician, and I'm certainly not making any money with
 the sounds I publish here. So if you are an idle copyright lawyer, don't need
 to bother with me. I'm just a guy that supports music (I still buy CDs, how
