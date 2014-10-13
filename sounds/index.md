@@ -29,4 +29,5 @@ the artists themselves look like douches.
 
 1. [AC/DC -- Back In Black](/sounds/back-in-black.html)
 2. [Pink Floyd -- Shine On You Crazy Diamond](/sounds/shine-on-you-crazy-diamond.html)
-3. [Rush - Limelight](/sounds/limelight.html)
+3. [Rush -- Limelight](/sounds/limelight.html)
+4. [Rush -- Red Barchetta](/sounds/red-barchetta.html)
