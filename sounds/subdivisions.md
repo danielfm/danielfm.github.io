@@ -12,7 +12,7 @@ image:
   feature: sounds/alex-lifeson-3.jpg
 song:
   url: "http://clyp.it/gpkz5j5d.mp3"
-  duration: 255
+  duration: 335
 ---
 
 <p>
