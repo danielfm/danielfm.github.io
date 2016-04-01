@@ -12,8 +12,8 @@ image:
 ---
 
 My name is Daniel Martins and I'm a senior software engineer currently working at
-[globo.com](http://globo.com), the internet branch of the largest mass media
-group of Latin America.
+[descomplica.com.br](http://descomplica.com.br), the largest online classroom
+in Brazil.
 
 I'm passionate about open source software, programming languages (specially the
 weird ones), machine learning, and pretty much any computer science magic you
@@ -23,7 +23,7 @@ I currently live in Rio de Janeiro, although I was born and grew up near São
 Paulo. When I'm not coding, I like to
 [watch TV](https://trakt.tv/user/danielfmt),
 [listen to music](http://open.spotify.com/user/danielfmt),
-[play the guitar](http://soundcloud.cm/danielfm), and have some beer with my
+[play the guitar](http://soundcloud.com/danielfm), and have some beer with my
 friends.
 
 Please check my [portfolio](/portfolio.html) to see what I've been up to, or
