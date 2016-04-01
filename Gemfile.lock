@@ -2,7 +2,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     RedCloth (4.2.9)
-    coderay (1.1.1)
     colorator (0.1)
     ffi (1.9.10)
     jekyll (3.1.2)
@@ -42,9 +41,9 @@ PLATFORMS
 
 DEPENDENCIES
   RedCloth
-  coderay
   jekyll
   jekyll-minibundle
+  rouge
   sass
   therubyracer
 

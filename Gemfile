@@ -4,6 +4,6 @@ gem 'jekyll'
 gem 'jekyll-minibundle'
 gem 'therubyracer'
 
-gem 'coderay'
+gem 'rouge'
 gem 'RedCloth'
 gem 'sass'

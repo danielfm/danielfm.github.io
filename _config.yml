@@ -36,20 +36,15 @@ links:
 timezone:    America/Sao_Paulo
 future:      true
 markdown:    kramdown
-highlighter: coderay
+highlighter: rouge
 
 kramdown:
   auto_ids: true
   footnote_nr: 1
   entity_output: as_char
   toc_levels: 1..6
-
-coderay:
-  line_numbers: 
-  line_numbers_start: 1
-  tab_width: 4
-  bold_every: 10
-  css: class
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  syntax_highlighter: rouge
 
 # https://github.com/mojombo/jekyll/wiki/Permalinks
 permalink:   /posts/:title.html
