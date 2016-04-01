@@ -23,7 +23,8 @@ I currently live in Rio de Janeiro, although I was born and grew up near São
 Paulo. When I'm not coding, I like to
 [watch TV](https://trakt.tv/user/danielfmt),
 [listen to music](http://open.spotify.com/user/danielfmt),
-[play the guitar](/sounds.html), and have some beer with my friends.
+[play the guitar](http://soundcloud.cm/danielfm), and have some beer with my
+friends.
 
 Please check my [portfolio](/portfolio.html) to see what I've been up to, or
 visit my profile at [GitHub](https://github.com/danielfm) or
