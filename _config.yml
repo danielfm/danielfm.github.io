@@ -1,5 +1,5 @@
 title:       Daniel Martins
-tagline:     Inner junk. Exposed.
+tagline:     Software Engineer
 description:
 
 # Comment out url when working locally to resolve base urls correctly
@@ -14,12 +14,11 @@ analytics:
 owner:
   name:           Daniel Martins
   avatar:         http://www.gravatar.com/avatar/fddde9212fa2082e7c5eb27b069567d9.png?s=200
-  bio:            Software engineer at globo.com
+  bio:            Software engineer @ Descomplica
   email:          daniel.tritone@gmail.com
   disqus:         danielfm
   twitter:        danielfmt
   github:         danielfm
-  instagram:           
 
 # Links to include in top navigation
 # For external links add external: true
