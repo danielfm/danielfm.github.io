@@ -37,7 +37,7 @@ depending on your workload, will sit there doing nothing most of the time.
 
 We needed to find a way to use our available compute resources more wisely.
 
-## The Clear Winner
+## The Winner
 
 After looking around for alternatives to ECS, [Kubernetes][k8s]
 seemed to be the right one for us.
@@ -90,9 +90,9 @@ which gives us some neat advantages.
 The first obvious advantage is that it's very easy to create and destroy
 clusters without leaving anything silently hanging around.
 
-Another feature is that, unlike kube-up, you can create clusters in existing
-VPCs so all services hosted in Kubernetes have access to other existing
-AWS-hosted services, such as [relational databases][rds], right off the bat.
+Another feature is that, unlike kube-up, you can create a cluster in an existing
+VPC so all services running in Kubernetes have access to your existing
+AWS resources - such as [relational databases][rds] - right off the bat.
 
 In fact, you can run multiple clusters at the same time in the same VPC. This
 has a nice side-effect in which you can treat each cluster as an immutable
@@ -118,9 +118,9 @@ It was easy enough to manually create the yaml manifests for the first
 application images as soon as they were built by our continuous integration
 system.
 
-Just as a proof of concept, we quickly hacked together a small JavaScript
-function in [AWS Lambda][lambda] (based on [this article][lambda-article])
-that automatically updated the corresponding deployment object whenever it
+Just as a proof of concept, we quickly hacked together a small function in
+[AWS Lambda][lambda] (based on [this article][lambda-article]) that
+automatically updated the corresponding deployment object whenever it
 received a merge notification in which the tests passed.
 
 > This small Lambda function has now evolved into a major component in our
@@ -134,9 +134,9 @@ that all services referenced each other via this DNS. Then, it was just a matter
 of changing those DNS records to point the corresponding
 [Kubernetes-managed load balancers][services].
 
-To ensure every part of the staging pipeline was working as expected, we spent
-some time monitoring all staging deployments looking for bugs and polishing
-things up.
+To ensure every part of the pipeline was working as expected, we spent some time
+monitoring all staging deployments looking for bugs and polishing things up
+as we could.
 
 ### More Tests, More Learning
 
@@ -172,7 +172,7 @@ ever-increasing workload.
 
 Instead of shifting all traffic at once, like we did in staging, we thought we
 needed to take a more careful approach and used [weighted routing policy][route53]
-to gradually shift traffic to the Kubernetes cluster, usually in 25% increments.
+to gradually shift traffic to the Kubernetes cluster.
 
 <figure>
   <img src="/images/five-months-of-kubernetes/phaseout.png" alt="Elastic Beanstalk phaseout"/>
@@ -212,9 +212,8 @@ front-end services; artists and product owners get the chance to validate the
 changes and share their inputs before the PR is merged.
 
 To send the [GitHub Status][status-api] notifications you see in these pictures,
-we implemented a small daemon in Go that runs within the Kubernetes cluster that
-monitors deployments to our `development` namespace and reconciles the
-deployment status for each revision.
+we implemented a small daemon in Go that monitors deployments to our
+`development` namespace and reconciles the deployment status for each revision.
 
 ## Conclusion
 
@@ -239,9 +238,9 @@ engineering team[^4].
 We hope to continue building on Kubernetes to make our delivery platform even
 more dynamic and awesome!
 
-[^1]: Each AWS region seems to evolve at a different pace. At the time of this writing, multi-container Beanstalk applications, or even [ECS][ecs] wasn't available for the `sa-east-1` region. Almost all of our users live in Brazil, so moving out to a different region wasn't really an option.
+[^1]: Each AWS region seems to evolve at a different pace. At the time of this writing, multi-container Beanstalk applications and [ECS][ecs] were not available for the `sa-east-1` region. Almost all of our users live in Brazil, so moving out to a different region wasn't really an option.
 [^2]: There are a number of initiatives to come up with a better tool to create and manage Kubernetes clusters, such as [kops][kops].
-[^3]: The migration is still in progress, but things are moving fast; we expect it to be completed by the end of the month.
+[^3]: The migration is still in progress, but things are moving fast; we expect it to be completed by the end of October.
 [^4]: The ops/delivery team is actually a one-engineer team: me!
 
 [12factor]:    https://12factor.net/
