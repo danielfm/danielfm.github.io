@@ -158,7 +158,15 @@ Also take some time to understand how
 which pods gets killed in the case of memory pressure. This is particularly
 important if you, like us, share the same cluster for all environments.
 
-#### Tip: Give `kube-system` Some Love
+#### **Tip.** Enable Cross-Zone Load Balancing (AWS)
+
+This is [already fixed][service-cross] in Kubernetes 1.4, but for now, if
+you expose your services via the [LoadBalancer type][lb], don't forget to
+manually enable [cross-zone load balancing][cross-zone] for the corresponding
+ELB; if you don't, you might notice uneven balancing across your application
+pods if they are spread in nodes from different availability zones.
+
+#### **Tip.** Give `kube-system` Some Love
 
 If you ever tried Kubernetes, you probably noticed there's a `kube-system`
 namespace there with a bunch of stuff in it; do yourself a favor and take some
@@ -243,37 +251,40 @@ more dynamic and awesome!
 [^3]: The migration is still in progress, but things are moving fast; we expect it to be completed by the end of October.
 [^4]: The ops/delivery team is actually a one-engineer team: me!
 
-[12factor]:    https://12factor.net/
-[abac]:        http://kubernetes.io/docs/admin/authorization/#abac-mode
-[azs]:         http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
-[beanstalk]:   http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html
-[bootcamp]:    https://kubernetesbootcamp.github.io/kubernetes-bootcamp/index.html
+[12factor]:       https://12factor.net/
+[abac]:           http://kubernetes.io/docs/admin/authorization/#abac-mode
+[azs]:            http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+[beanstalk]:      http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html
+[bootcamp]:       https://kubernetesbootcamp.github.io/kubernetes-bootcamp/index.html
 [cloudformation]: https://aws.amazon.com/cloudformation/
-[deployments]: http://kubernetes.io/docs/user-guide/deployments/
-[descomplica]: https://descomplica.com.br
-[dns]:         https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns
-[dns-issue]:   https://github.com/coreos/coreos-kubernetes/issues/533
-[ecs]:         https://aws.amazon.com/ecs/
-[fluentd]:     https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/
-[grafana]:     http://grafana.org
-[hightower]:   https://twitter.com/kelseyhightower
-[hpa]:         http://kubernetes.io/docs/user-guide/horizontal-pod-autoscaling/
-[influxdb]:    https://www.influxdata.com
-[k8s]:         http://kubernetes.io
-[kops]:        https://github.com/kubernetes/kops
-[kthw]:        https://github.com/kelseyhightower/kubernetes-the-hard-way
-[kube-aws]:    https://github.com/coreos/coreos-kubernetes/tree/master/multi-node/aws
-[kube-up]:     http://kubernetes.io/docs/getting-started-guides/binary_release/
-[lambda]:      https://aws.amazon.com/documentation/lambda/
+[cross-zone]:     https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-disable-crosszone-lb.html
+[deployments]:    http://kubernetes.io/docs/user-guide/deployments/
+[descomplica]:    https://descomplica.com.br
+[dns]:            https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns
+[dns-issue]:      https://github.com/coreos/coreos-kubernetes/issues/533
+[ecs]:            https://aws.amazon.com/ecs/
+[fluentd]:        https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/
+[grafana]:        http://grafana.org
+[hightower]:      https://twitter.com/kelseyhightower
+[hpa]:            http://kubernetes.io/docs/user-guide/horizontal-pod-autoscaling/
+[influxdb]:       https://www.influxdata.com
+[k8s]:            http://kubernetes.io
+[kops]:           https://github.com/kubernetes/kops
+[kthw]:           https://github.com/kelseyhightower/kubernetes-the-hard-way
+[kube-aws]:       https://github.com/coreos/coreos-kubernetes/tree/master/multi-node/aws
+[kube-up]:        http://kubernetes.io/docs/getting-started-guides/binary_release/
+[lambda]:         https://aws.amazon.com/documentation/lambda/
 [lambda-article]: https://aws.amazon.com/blogs/compute/dynamic-github-actions-with-aws-lambda/
-[monitoring]:  https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/cluster-monitoring
-[ns]:          http://kubernetes.io/docs/user-guide/namespaces/
-[pods]:        http://kubernetes.io/docs/user-guide/pod-states/#container-probes
-[qos]:         https://github.com/kubernetes/kubernetes/blob/master/docs/design/resource-qos.md#qos-classes
-[petsets]:     http://kubernetes.io/docs/user-guide/petset/
-[rds]:         https://aws.amazon.com/rds/
-[resources]:   http://kubernetes.io/docs/user-guide/compute-resources/
-[route53]:     http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html
-[services]:    http://kubernetes.io/docs/user-guide/services/
-[status-api]:  https://developer.github.com/v3/repos/statuses/
-[sumologic]:   https://sumologic.com
+[lb]:             http://kubernetes.io/docs/user-guide/services/#type-loadbalancer
+[monitoring]:     https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/cluster-monitoring
+[ns]:             http://kubernetes.io/docs/user-guide/namespaces/
+[pods]:           http://kubernetes.io/docs/user-guide/pod-states/#container-probes
+[qos]:            https://github.com/kubernetes/kubernetes/blob/master/docs/design/resource-qos.md#qos-classes
+[petsets]:        http://kubernetes.io/docs/user-guide/petset/
+[rds]:            https://aws.amazon.com/rds/
+[resources]:      http://kubernetes.io/docs/user-guide/compute-resources/
+[route53]:        http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html
+[services]:       http://kubernetes.io/docs/user-guide/services/
+[service-cross]:  https://github.com/kubernetes/kubernetes/pull/30695
+[status-api]:     https://developer.github.com/v3/repos/statuses/
+[sumologic]:      https://sumologic.com
