@@ -4,7 +4,7 @@ title: Five Months of Kubernetes
 description:
   visible: true
   text: This is how we used Kubernetes to power our continuous delivery pipeline.
-date: 2016-09-31 00:00
+date: 2016-09-14 12:00
 categories: [ops]
 tags: [ops, infrastructure, kubernetes, descomplica, paas, cloud, aws, beanstalk, continuous delivery]
 comments: true
