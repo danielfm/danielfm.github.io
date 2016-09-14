@@ -12,8 +12,7 @@ image:
 ---
 
 My name is Daniel Martins and I'm a senior software engineer currently working at
-[descomplica.com.br](http://descomplica.com.br), the largest online classroom
-in Brazil.
+[Descomplica](http://descomplica.com.br), the largest online classroom in Brazil.
 
 I'm passionate about open source software, programming languages (specially the
 weird ones), machine learning, and pretty much any computer science magic you
