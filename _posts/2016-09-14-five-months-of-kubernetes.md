@@ -188,7 +188,13 @@ to gradually shift traffic to the Kubernetes cluster.
 </figure>
 
 Once we noticed no more requests were reaching the legacy Beanstalk environments,
-we went ahead and killed them[^3].
+we went ahead and killed them.
+
+**Update (Sep 21, 2016)**: All major services were migrated to our new platform!
+These are the final numbers[^3]:
+
+- ~30-50% decrease in monthly costs
+- ~70-75% decrease in # of instances
 
 ## Beyond Production
 
@@ -248,7 +254,7 @@ more dynamic and awesome!
 
 [^1]: Each AWS region seems to evolve at a different pace. At the time of this writing, multi-container Beanstalk applications and [ECS][ecs] were not available for the `sa-east-1` region. Almost all of our users live in Brazil, so moving out to a different region wasn't really an option.
 [^2]: There are a number of initiatives to come up with a better tool to create and manage Kubernetes clusters, such as [kops][kops].
-[^3]: The migration is still in progress, but things are moving fast; we expect it to be completed by the end of October.
+[^3]: Range depends on the workload.
 [^4]: The ops/delivery team is actually a one-engineer team: me!
 
 [12factor]:       https://12factor.net/
