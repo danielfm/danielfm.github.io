@@ -191,7 +191,7 @@ Once we noticed no more requests were reaching the legacy Beanstalk environments
 we went ahead and killed them.
 
 **Update (Sep 21, 2016)**: All major services were migrated to our new platform!
-These are the final numbers[^3] (for now):
+These are the final numbers[^3]:
 
 - ~53-63% decrease in monthly costs
 - ~72-82% decrease in # of instances
