@@ -7,7 +7,7 @@ description:
 date: 2016-09-14 12:00
 categories: [ops]
 tags: [ops, infrastructure, kubernetes, descomplica, paas, cloud, aws, beanstalk, continuous delivery]
-comments: false
+comments: true
 image:
   feature: five-months-of-kubernetes/cover.jpg
 ---
