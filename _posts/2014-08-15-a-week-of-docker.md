@@ -7,7 +7,7 @@ description:
 date: 2014-08-15 11:50
 categories: [devops]
 tags: [docker, fig, tips, deployment, environment]
-comments: true
+comments: false
 image:
   feature: a-week-of-docker/containers.jpg
 ---
