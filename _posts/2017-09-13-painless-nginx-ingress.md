@@ -14,7 +14,7 @@ image:
 
 So you have a [Kubernetes](https://kubernetes.io) cluster and are using (or
 considering using) the
-[NGINX ingress controller](https://github.com/kubernetes/ingress/tree/master/controllers/nginx)
+[NGINX ingress controller](https://github.com/kubernetes/ingress-nginx)
 to forward outside traffic to in-cluster services. That's awesome!
 
 The first time I looked at it, everything looked so easy; installing the NGINX
@@ -206,10 +206,10 @@ accordingly. In other words, make sure your config is in tune with your kernel.
 
 And please, don't stop there. Do this thought exercise to every line of the
 generated config. Hell, take at look at
-[all the things](https://github.com/kubernetes/ingress/blob/0c8f81301f75987c88460f74eda8e0e4d08b273a/controllers/nginx/rootfs/etc/nginx/template/nginx.tmpl)
+    [all the things](https://github.com/kubernetes/ingress-nginx/blob/master/rootfs/etc/nginx/template/nginx.tmpl)
 the ingress controller will let you change, and don't hesitate to
 change anything that does not fit your use case. Most NGINX directives can be
-[customized](https://github.com/kubernetes/ingress/blob/master/controllers/nginx/configuration.md)
+[customized](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/configmap.md)
 via `ConfigMap` entries and/or annotations.
 
 ### Kernel Params
