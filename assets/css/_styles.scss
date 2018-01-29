@@ -100,8 +100,8 @@ code {
   font-weight: bold;
 }
 
-.highlight {
-  border: 3px solid #dfdfdf;
+div.highlight {
+  border: 3px solid $grey-dark;
   border-radius: 4px;
   padding: 12px;
   margin-bottom: $lh;
@@ -1023,7 +1023,7 @@ audio {
     }
   }
 
-  .highlight code {
+  div.highlight code {
     font-size: 0.8em;
   }
 
