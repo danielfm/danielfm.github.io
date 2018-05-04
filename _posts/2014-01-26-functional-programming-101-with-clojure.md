@@ -29,7 +29,7 @@ a go with [Clojure](http://clojure.org).
 
 We can start by defining a function that returns a `n`-headed Hydra.
 
-{% highlight clojure %}
+```clojure
 (defn new-hydra
   "Returns a Hydra with n heads."
   [n]
@@ -37,7 +37,7 @@ We can start by defining a function that returns a `n`-headed Hydra.
 
 (new-hydra 3)
 ;; => (3 3 3)
-{% endhighlight %}
+```
 
 To make it easy to compare both solutions, the data structure I'm using here
 is the same one used by Dinkar: a list. In this list, each number represents
@@ -46,21 +46,21 @@ a living head and its level of strength.
 Now, according to the problem description, when Hercules chops off a level 3
 head, the Hydra grows two level 2 heads.
 
-{% highlight clojure %}
+```clojure
 (chop-head (new-hydra 3))
 ;; => (2 2 3 3)
-{% endhighlight %}
+```
 
 Here's one possible implementation for such a function.
 
-{% highlight clojure %}
+```clojure
 (defn chop-head
   "Returns a new Hydra after chop off its first head."
   [hydra]
   (let [head (first hydra)]
     (into (rest hydra)
           (new-hydra (dec head)))))
-{% endhighlight %}
+```
 
 This code should make sense even if you are not familiar with Clojure.
 
@@ -82,61 +82,61 @@ called the [closure property](http://mitpress.mit.edu/sicp/full-text/book/book-Z
 
 To illustrate this concept with code, let's consider Clojure's `cons` function.
 
-{% highlight clojure %}
+```clojure
 (cons 1 (cons 2 '()))
 ;; => (1 2)
 
 (cons 1 (cons 2 (cons 3 nil)))
 ;; => (1 2 3)
-{% endhighlight %}
+```
 
 That means `cons` follows the closure principle. But what about our `chop-head`
 function? Does the principle hold?
 
-{% highlight clojure %}
+```clojure
 (chop-head (chop-head (chop-head '(2))))
 ;; => NullPointerException
-{% endhighlight %}
+```
 
 Apparently not. To fix that, we need to make sure `dec` is not called with
 `nil`, since it's not possible to decrement a null value.
 
-{% highlight clojure %}
+```clojure
 (defn chop-head
   "Returns a new Hydra after chop off its first head."
   [hydra]
   (let [head (first hydra)]
     (into (rest hydra)
           (new-hydra (dec (or head 1))))))
-{% endhighlight %}
+```
 
 What about now?
 
-{% highlight clojure %}
+```clojure
 (chop-head (chop-head (chop-head '(2))))
 ;; => ()
-{% endhighlight %}
+```
 
 ## Killing The Hydra
 
 In order for Hecules to kill the Hydra, he needs to repeatedly chop off Hydra's
 heads while it still has them.
 
-{% highlight clojure %}
+```clojure
 (defn chop-until-dead
   "Repeatedly chops Hydra's heads until no head is left."
   [hydra]
   (take-while #(not (empty? %))
               (iterate #(chop-head %) hydra)))
-{% endhighlight %}
+```
 
 The `(iterate f x)` function returns a lazy (infinite) sequence of `x`, `(f x)`,
 `(f (f x))`, etc, given that `f` is a function free of side-effects.
 
-{% highlight clojure %}
+```clojure
 (take 3 (iterate inc 0))
 ;; => (0 1 2)
-{% endhighlight %}
+```
 
 Since `chop-head` respects the closure principle by always returning a list,
 we can use it in `iterate` until we get an empty list, which means the Hydra
@@ -144,27 +144,27 @@ is DEAD.
 
 Let's test it on a 3-headed baby Hydra.
 
-{% highlight clojure %}
+```clojure
 (chop-until-dead (new-hydra 3))
 ;; => ((3 3 3) (2 2 3 3) (1 2 3 3) (2 3 3) (1 3 3) (3 3)
 ;;     (2 2 3) (1 2 3) (2 3) (1 3) (3) (2 2) (1 2) (2) (1))
-{% endhighlight %}
+```
 
 How many chops are needed in order to kill the original 9-headed Hydra?
 
-{% highlight clojure %}
+```clojure
 (count (chop-until-dead (new-hydra 9)))
 ;; => 986409
-{% endhighlight %}
+```
 
 Another interesting question: what is the maximum number of heads Hercules
 fought at once?
 
-{% highlight clojure %}
+```clojure
 (apply max
        (map count
             (chop-until-dead (new-hydra 9))))
 ;; => 37
-{% endhighlight %}
+```
 
 Ah. Beautiful.

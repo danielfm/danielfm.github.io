@@ -59,7 +59,7 @@ suppose this API requires a `SessionId` header to be sent over with the request
 in order to avoid
 [CSRF](http://en.wikipedia.org/wiki/Cross-site_request_forgery) attacks.
 
-{% highlight racket %}
+```scheme
 #lang racket/base
 
 ;; Object to keep the session-id across requests
@@ -78,7 +78,7 @@ in order to avoid
     (perform-request! session method params))
 
   (parse-json response))
-{% endhighlight %}
+```
 
 When the first request is sent - without the `SessionId` header - the server
 responds with an error, i.e. HTTP 409, in which case the procedure updates
@@ -94,7 +94,7 @@ first unauthorized request.
 If only we had the chance to **return** that second response right to the caller
 instead of having the stack to unwind itself...
 
-{% highlight racket %}
+```scheme
 (define (perform-request! session method params)
   ;; ...
 
@@ -105,7 +105,7 @@ instead of having the stack to unwind itself...
     (return (perform-request! ...)))
 
   (parse-json response))
-{% endhighlight %}
+```
 
 ### Enter `call/cc`
 
@@ -115,7 +115,7 @@ of the program.
 
 Here's an example:
 
-{% highlight racket %}
+```scheme
 #lang racket/base
 
 ;; We'll keep the captured continuation here
@@ -136,12 +136,12 @@ Here's an example:
 ;; Replays the continuation with different arguments
 (cc 2) ;->  5, or (+ 1 (* 2 2))
 (cc 6) ;-> 13, or (+ 1 (* 2 6))
-{% endhighlight %}
+```
 
 It turns out that, if we rename `k` to `return`, this is exactly the thing
 we need in order to fix that broken API client example:
 
-{% highlight racket %}
+```scheme
 (define (perform-request! session method params)
   (let/cc return ; same as (call/cc (lambda (return) body...))
     ;; ...
@@ -153,7 +153,7 @@ we need in order to fix that broken API client example:
       (return (perform-request! session method params)))
 
     (parse-json response)))
-{% endhighlight %}
+```
 
 Now the function captures the current continuation at the moment the procedure
 `perform-request!` is first called. Then, if the server denies a request, we
@@ -173,7 +173,7 @@ to read the code that inspired this example.
 be viewed as special routines that behave like iterators. If you are familiar
 with Python, you've probably seen code like this one:
 
-{% highlight python %}
+```python
 def iterate(list):
   "Generator function that iterates through list."
   for item in list:
@@ -185,7 +185,7 @@ it = iterate(range(2))
 it.next() # -> 0
 it.next() # -> 1
 it.next() # -> raises StopIteration error
-{% endhighlight %}
+```
 
 Do you see any resemblance between this example and the previous one? Although
 Python doesn't provide a `call/cc`-like facility in the language, one can argue
@@ -199,7 +199,7 @@ continuations?
 What we need is a function that returns another function which, when called,
 yields one item at a time, until the list is exhausted.
 
-{% highlight racket %}
+```scheme
 (define (iterate lst)
   (lambda ()
     (let/cc return
@@ -212,7 +212,7 @@ yields one item at a time, until the list is exhausted.
 (define next (iterate (range 3)))
 (next) ;-> 0
 (next) ;-> 0
-{% endhighlight %}
+```
 
 This code follows the same pattern as the previous ones, but it doesn't seem
 to work the way you might expect. The reason should be clear though: `iterate`
@@ -223,7 +223,7 @@ To make this code work, we need to capture the current continuation from the
 inside of `for-each` and store it so it can be used to resume the computation
 when `next` is called again.
 
-{% highlight racket %}
+```scheme
 (define (iterate lst)
 
   ;; Defines `state` as being a function that starts the
@@ -260,7 +260,7 @@ when `next` is called again.
 (next) ;-> 0
 (next) ;-> 1
 (next) ;-> 'done
-{% endhighlight %}
+```
 
 If you are having trouble understanding how this code works, the following
 diagram might help.

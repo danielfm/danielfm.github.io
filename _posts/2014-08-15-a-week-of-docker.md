@@ -95,7 +95,7 @@ image.
 
 This is the application's `Dockerfile`:
 
-{% highlight bash %}
+```dockerfile
 # Base image (https://registry.hub.docker.com/_/ubuntu/)
 FROM ubuntu
 
@@ -124,7 +124,7 @@ ADD . /texbin/app/
 
 # Try not to add steps after the last ADD so we can use the
 # Docker build cache more efficiently
-{% endhighlight %}
+```
 
 Information about the individual commands can be obtained
 [here](https://docs.docker.com/reference/builder/).
@@ -172,16 +172,16 @@ busting.
 To run the application, first we'll need a container that exposes a single
 MongoDB server:
 
-{% highlight bash %}
+```bash
 $ docker run --name texbin_mongodb_1 -d mongo
-{% endhighlight %}
+```
 
 Then you have to build the application image and start a new container:
 
-{% highlight bash %}
+```bash
 $ docker build -t texbin:dev .
 $ docker run --name texbin_app_1 -d --link texbin_mongodb_1:mongodb -p 3000:3000 texbin:dev
-{% endhighlight %}
+```
 
 Learning how [container linking](https://docs.docker.com/userguide/dockerlinks/)
 and [volumes](https://docs.docker.com/userguide/dockervolumes/) work is
@@ -202,7 +202,7 @@ working, you should be able to access the application at
 It turns out it's quite easy to automate these last steps with
 [Fig](http://www.fig.sh/):
 
-{% highlight yaml %}
+```yaml
 # fig.yml
 
 mongodb:
@@ -216,7 +216,7 @@ app:
     - mongodb:mongodb
   volumes:
     - .:/texbin/app
-{% endhighlight %}
+```
 
 Then, run `fig up` in the terminal in order to build the images, start the
 containers, and link them.
@@ -234,7 +234,7 @@ configuration, right? A simple way to -- sort of -- solve this is by creating
 another image, based on the previous one, that changes the required
 configuration:
 
-{% highlight bash %}
+```dockerfile
 # Uses our previous image as base
 FROM texbin
 
@@ -250,7 +250,7 @@ RUN rake assets:precompile
 
 # Exposes the public directory as a volume
 VOLUME /texbin/app/public
-{% endhighlight %}
+```
 
 If you know a better way to do this, please let me know in the comments.
 
