@@ -110,6 +110,47 @@ resilient against cascading failures.
 All my hacks are [open source code](https://github.com/danielfm). Check them out
 if you want to know what my code looks like.
 
+### spotify.el
+
+<div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
+  <div class="device">
+    <div class="screen">
+      <a href="http://combate.tv" target="_blank" title="Go to Combate Play">
+        <img src="https://github.com/danielfm/spotify.el/raw/master/img/playlist-tracks.png"/>
+      </a>
+    </div>
+  </div>
+</div>
+
+As a somewhat heavy [emacs](https://www.gnu.org/software/emacs/) user, I like
+the idea of not having to leave my favorite text editor when I need to do things
+like accessing the
+[IRC](https://www.gnu.org/software/emacs/manual/html_mono/erc.html),
+[interacting with git](https://magit.vc/), and things like that. One of the
+things I missed the most was the ability to control the Spotify client
+application from within Emacs, so I created
+[spotify.el](https://github.com/danielfm/spotify.el).
+
+With spotify.el, I can browse my playlists, list their tracks, show tracks
+from some given artist or album, as well as control the Spotify player
+(play, pause, go to the next track, toggle repeat, etc), all without leaving
+my text editor.
+
+#### Why is it cool?
+
+The documentation on the matter is not easy to follow, so I thought it might be
+easier to just take the code of some existing mode as a starting point and go
+from there. In the case of spotify.el, as everything are displayed as simple
+lists (i.e. playlists, songs), I thought the
+[package menu](https://www.gnu.org/software/emacs/manual/html_node/emacs/Package-Menu.html)
+would be a good starting point.
+
+I also had to learn a little bit of
+[Applescript](https://en.wikipedia.org/wiki/AppleScript) in order to send
+commands to (and read data from) the Spotify client in OS X. The support for
+Linux via D-Bus was added by another user via a
+[pull request](https://github.com/danielfm/spotify.el/pull/6).
+
 ### mandelbrot
 
 This page's cover picture was generated using
@@ -140,6 +181,16 @@ order to compute the pixel intensity values in parallel by dividing the
 work into `N` jobs and submitting them to child processes spawned via `fork()`.
 
 ### photo-mosaic
+
+<div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
+  <div class="device">
+    <div class="screen">
+      <a href="http://combate.tv" target="_blank" title="Go to Combate Play">
+        <img src="https://github.com/danielfm/photo-mosaic/raw/master/img/demo-2.jpg"/>
+      </a>
+    </div>
+  </div>
+</div>
 
 Although the input and target images can be customized, the goal of this hack
 was to paint [Mona Lisa](http://en.wikipedia.org/wiki/Mona_Lisa) using a corpus
