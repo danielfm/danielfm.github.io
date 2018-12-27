@@ -192,10 +192,10 @@ work into `N` jobs and submitting them to child processes spawned via `fork()`.
   </div>
 </div>
 
-Although the input and target images can be customized, the goal of this hack
-was to paint [Mona Lisa](http://en.wikipedia.org/wiki/Mona_Lisa) using a corpus
-of 3,588 images of Pablo Picasso's paintings and drawings as pixels in the
-target image.
+Although the input and target images can be customized to produce any image,
+the goal of this hack was to paint
+[Mona Lisa](http://en.wikipedia.org/wiki/Mona_Lisa) using a corpus of 3,588
+images of Pablo Picasso's paintings and drawings as pixels in the target image.
 
 The resulting file, a 13,960x20,800 JPEG image, can be downloaded from the
 project's repository as a 7zip archive.
