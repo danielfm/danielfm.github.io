@@ -1,7 +1,7 @@
 ---
 layout: page_bigcover
 permalink: /about.html
-title: Daniel Martins
+title: Who?
 date: 2012-04-01 22:00
 description:
   visible: true
