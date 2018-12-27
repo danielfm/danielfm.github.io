@@ -128,13 +128,14 @@ like accessing the
 [IRC](https://www.gnu.org/software/emacs/manual/html_mono/erc.html),
 [interacting with git](https://magit.vc/), and things like that. One of the
 things I missed the most was the ability to control the Spotify client
-application from within Emacs, so I created
-[spotify.el](https://github.com/danielfm/spotify.el).
+application from within Emacs, so I created spotify.el.
 
 With spotify.el, I can browse my playlists, list their tracks, show tracks
 from some given artist or album, as well as control the Spotify player
 (play, pause, go to the next track, toggle repeat, etc), all without leaving
 my text editor.
+
+Link: https://github.com/danielfm/spotify.el
 
 #### Why is it cool?
 
