@@ -4,15 +4,12 @@ permalink: /portfolio.html
 title: Featured Projects
 description:
   visible: true
-  text: So, are you interested in my work? Go ahead, take a look!
+  text: Some highlighted projects I’ve worked on during my carreer as a software engineer, as well as some fun side projects.
 tags: [daniel, martins, software engineer, globo.com, programming, open source, portfolio, projects]
 date: 2014-05-23 00:00
 image:
   feature: portfolio.jpg
 ---
-
-This list highlights some of the main projects I've worked on so far
-during my carreer as a software engineer, as well as some fun side projects.
 
 ## Index of Contents
 
