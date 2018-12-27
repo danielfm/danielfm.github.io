@@ -191,7 +191,7 @@ work into `N` jobs and submitting them to child processes spawned via `fork()`.
 <div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
   <div class="device">
     <div class="screen">
-      <a href="http://combate.tv" target="_blank" title="Go to Combate Play">
+      <a href="https://github.com/danielfm/photo-mosaic" target="_blank" title="Go to Combate Play">
         <img src="https://github.com/danielfm/photo-mosaic/raw/master/img/demo-2.jpg"/>
       </a>
     </div>
@@ -254,5 +254,4 @@ which is implemented in pure C.
 
 You can see all [merged Pull Requests](https://github.com/pulls?page=1&q=is%3Apr+author%3Adanielfm+archived%3Afalse+is%3Aclosed+is%3Apublic+is%3Amerged)
 I've made over the years to other open source projects in
-[GitHub](https://github.com) you can see all pull requests I've made over the
-years to other open source projects.
+[GitHub](https://github.com).
