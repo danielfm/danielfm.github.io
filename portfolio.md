@@ -11,6 +11,21 @@ image:
   feature: portfolio.jpg
 ---
 
+This list highlights some of the main projects I've worked on so far
+during my carreer as a software engineer, as well as some fun side projects.
+
+## Index of Contents
+
+- [Professional Projects](#professional-projects)
+  - [Globosat Play](#globosat-play)
+  - [Combate Play](#combate-play)
+- [Spare Time Hacks](#spare-time-hacks)
+  - [spotify.el](#spotifyel)
+  - [mandelbrot](#mandelbrot)
+  - [photo-mosaic](#photo-mosaic)
+  - [bencode](#bencode)
+- [Open Source Contributions](#open-source-contributions)
+
 ## Professional Projects
 
 ### Globosat Play
@@ -108,7 +123,7 @@ resilient against cascading failures.
 ## Spare Time Hacks
 
 All my hacks are [open source code](https://github.com/danielfm). Check them out
-if you want to know what my code looks like.
+if you want to see what my code looks like.
 
 ### spotify.el
 
@@ -122,7 +137,7 @@ if you want to know what my code looks like.
   </div>
 </div>
 
-As a somewhat heavy [emacs](https://www.gnu.org/software/emacs/) user, I like
+As a somewhat heavy [Emacs](https://www.gnu.org/software/emacs/) user, I like
 the idea of not having to leave my favorite text editor when I need to do things
 like accessing the
 [IRC](https://www.gnu.org/software/emacs/manual/html_mono/erc.html),
@@ -135,22 +150,16 @@ from some given artist or album, as well as control the Spotify player
 (play, pause, go to the next track, toggle repeat, etc), all without leaving
 my text editor.
 
-Link: https://github.com/danielfm/spotify.el
+Link: <https://github.com/danielfm/spotify.el>
 
 #### Why is it cool?
 
-The documentation on the matter is not easy to follow, so I thought it might be
-easier to just take the code of some existing mode as a starting point and go
-from there. In the case of spotify.el, as everything are displayed as simple
-lists (i.e. playlists, songs), I thought the
-[package menu](https://www.gnu.org/software/emacs/manual/html_node/emacs/Package-Menu.html)
-would be a good starting point.
+It's really nice to have everything just a few key strokes away; this is why
+I love Emacs so much.
 
-I also had to learn a little bit of
-[Applescript](https://en.wikipedia.org/wiki/AppleScript) in order to send
-commands to (and read data from) the Spotify client in OS X. The support for
-Linux via D-Bus was added by another user via a
-[pull request](https://github.com/danielfm/spotify.el/pull/6).
+One thing I particularly liked was how smooth the whole process of creating
+this extension was. You can write code and have it evaluated right away right
+there, in the same editor, which makes it really easy to get things done.
 
 ### mandelbrot
 
@@ -161,9 +170,8 @@ wrote in Octave after reading a little bit about
 subject.
 
 The region of the [Mandelbrot Set](http://en.wikipedia.org/wiki/Mandelbrot_set)
-depicted here -- around `.283+.484i` -- is known as the
-[Quad-Spiral Valley](http://www.nahee.com/Derbyshire/manguide.html). To generate
-the picture yourself:
+depicted here -- around `.283+.484i` -- is known as the Quad-Spiral Valley.
+To generate the picture yourself:
 
 ```matlab
 % Loads the parallel package (make sure to have it installed first)
@@ -244,3 +252,10 @@ which is implemented in pure C.
 *[UFC]: Ultimate Fighting Championship
 *[MMA]: Mixed Martial Arts
 *[VOD]: Video On Demand
+
+## Open Source Contributions
+
+You can see all [merged Pull Requests](https://github.com/pulls?page=1&q=is%3Apr+author%3Adanielfm+archived%3Afalse+is%3Aclosed+is%3Apublic+is%3Amerged)
+I've made over the years to other open source projects in
+[GitHub](https://github.com) you can see all pull requests I've made over the
+years to other open source projects. :tada:
