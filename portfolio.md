@@ -127,8 +127,8 @@ if you want to see what my code looks like.
 <div class="device-mockup" data-device="imac" data-orientation="portrait" data-color="black">
   <div class="device">
     <div class="screen">
-      <a href="http://combate.tv" target="_blank" title="Go to Combate Play">
-        <img src="https://github.com/danielfm/spotify.el/raw/master/img/playlist-tracks.png"/>
+      <a href="https://asciinema.org/a/218654" target="_blank" title="See spotify.el demo">
+        <img src="https://asciinema.org/a/218654.svg"/>
       </a>
     </div>
   </div>
