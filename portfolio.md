@@ -255,4 +255,4 @@ which is implemented in pure C.
 You can see all [merged Pull Requests](https://github.com/pulls?page=1&q=is%3Apr+author%3Adanielfm+archived%3Afalse+is%3Aclosed+is%3Apublic+is%3Amerged)
 I've made over the years to other open source projects in
 [GitHub](https://github.com) you can see all pull requests I've made over the
-years to other open source projects. :tada:
+years to other open source projects.

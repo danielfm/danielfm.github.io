@@ -52,8 +52,5 @@ sass:
   sass_dir: assets/css
   style: :compressed
 
-plugins:
-- emoji_for_jekyll
-
 include: [".htaccess"]
 exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp"]
