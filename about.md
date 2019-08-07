@@ -11,8 +11,10 @@ image:
   feature: about.jpg
 ---
 
-My name is Daniel Martins and I'm a senior software engineer currently working at
-[Descomplica](http://descomplica.com.br), the largest online classroom in Brazil.
+My name is Daniel Martins and I'm a senior software engineer currently working
+as a SRE at
+[Jusbrasil](http://www.jusbrasil.com.br), one of the fastest growing legaltech
+startups in Brazil.
 
 I'm passionate about open source software, programming languages (specially the
 weird ones), machine learning, and pretty much any computer science magic you
