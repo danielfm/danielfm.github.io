@@ -16,8 +16,10 @@ owner:
   avatar:         http://www.gravatar.com/avatar/fddde9212fa2082e7c5eb27b069567d9.png?s=200
   bio:            Software engineer @ Descomplica
   email:          daniel.tritone@gmail.com
-  keybase:        danielmartins
-  pgp:            45A2 5E75 E57C 632A
+  keybase:
+    username:     danielmartins
+    key_id:       0x45A25E75E57C632A
+  pgp:            
   disqus:         danielfm
   twitter:        danielfmt
   github:         danielfm

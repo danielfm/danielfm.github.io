@@ -13,19 +13,21 @@
 
     <div class="social">
       <ul>
-        <li><a id="mail" href="https://keybase.io/{{ site.owner.keybase }}"><span class="icon icon-user"></span><span class="foot-link">{{ site.owner.pgp }}</span></a></li>
+        {% if site.owner.keybase %}
+        <li><a id="mail" href="https://keybase.io/{{ site.owner.keybase.username }}"><span class="icon icon-user"></span><span class="foot-link">{{ site.owner.keybase.key_id }}</span></a></li>
+        {% endif %}
 
         {% if site.owner.twitter %}
-        <li><a id="twit" href="http://twitter.com/{{ site.owner.twitter }}" target="_blank"><span class="icon icon-twitter"></span><span class="foot-link">@{{ site.owner.twitter }}</a></li>
-          {% endif %}
+        <li><a id="twit" href="https://twitter.com/{{ site.owner.twitter }}" target="_blank"><span class="icon icon-twitter"></span><span class="foot-link">@{{ site.owner.twitter }}</a></li>
+        {% endif %}
 
-          {% if site.owner.github %}
-          <li><a id="twit" href="https://github.com/{{ site.owner.github }}" target="_blank"><span class="icon icon-github"></span><span class="foot-link">{{ site.owner.github }}</span></a></li>
-          {% endif %}
+        {% if site.owner.github %}
+        <li><a id="twit" href="https://github.com/{{ site.owner.github }}" target="_blank"><span class="icon icon-github"></span><span class="foot-link">{{ site.owner.github }}</span></a></li>
+        {% endif %}
 
-          {% if site.owner.dribbble %}
-          <li><a id="drib" href="http://dribbble.com/{{ site.owner.dribbble }}" target="_blank"><span class="icon icon-dribbble"></span><span class="foot-link">{{ site.owner.dribbble }}</span></a></li>
-          {% endif %}
+        {% if site.owner.dribbble %}
+        <li><a id="drib" href="http://dribbble.com/{{ site.owner.dribbble }}" target="_blank"><span class="icon icon-dribbble"></span><span class="foot-link">{{ site.owner.dribbble }}</span></a></li>
+        {% endif %}
       </ul>
     </div>
   </aside>
