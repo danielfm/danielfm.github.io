@@ -28,6 +28,6 @@ Paulo. When I'm not coding, I like to
 friends.
 
 Please check my [portfolio](/portfolio.html) to see what I've been up to, or
-visit my profile at [GitHub](https://github.com/danielfm) or
+visit my profile at [Keybase](https://keybase.io/{{ site.owner.keybas.eusername }}), [GitHub](https://github.com/danielfm) or
 [LinkedIn](https://linkedin.com/in/danielfmartins)
 <a href="https://raw.githubusercontent.com/danielfm/resume/master/resume.pdf" title="Resume in PDF format"><span class="icon icon-file-pdf"></span></a>.
