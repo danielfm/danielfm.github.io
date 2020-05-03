@@ -13,10 +13,6 @@
 
     <div class="social">
       <ul>
-        {% if site.owner.keybase %}
-        <li><a id="mail" href="https://keybase.io/{{ site.owner.keybase.username }}"><span class="icon icon-user"></span><span class="foot-link">{{ site.owner.keybase.key_id }}</span></a></li>
-        {% endif %}
-
         {% if site.owner.twitter %}
         <li><a id="twit" href="https://twitter.com/{{ site.owner.twitter }}" target="_blank"><span class="icon icon-twitter"></span><span class="foot-link">@{{ site.owner.twitter }}</a></li>
         {% endif %}
