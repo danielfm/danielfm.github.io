@@ -13,12 +13,16 @@
 
     <div class="social">
       <ul>
+        {% if site.owner.email %}
+        <li><a id="mail" href="mailto:{{ site.owner.email }}" target="_blank"><span class="icon icon-mail"></span><span class="foot-link">{{ site.owner.email }}</a></li>
+        {% endif %}
+
         {% if site.owner.twitter %}
         <li><a id="twit" href="https://twitter.com/{{ site.owner.twitter }}" target="_blank"><span class="icon icon-twitter"></span><span class="foot-link">@{{ site.owner.twitter }}</a></li>
         {% endif %}
 
         {% if site.owner.github %}
-        <li><a id="twit" href="https://github.com/{{ site.owner.github }}" target="_blank"><span class="icon icon-github"></span><span class="foot-link">{{ site.owner.github }}</span></a></li>
+        <li><a id="gh" href="https://github.com/{{ site.owner.github }}" target="_blank"><span class="icon icon-github"></span><span class="foot-link">{{ site.owner.github }}</span></a></li>
         {% endif %}
 
         {% if site.owner.dribbble %}

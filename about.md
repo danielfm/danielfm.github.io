@@ -28,7 +28,11 @@ Paulo. When I'm not coding, I like to
 friends.
 
 Please check my [portfolio](/portfolio.html) to see what I've been up to, or
-visit my profile at [Keybase](https://keybase.io/{{ site.owner.keybase.username }}),
-[GitHub](https://github.com/danielfm) or
+visit my profile at [GitHub](https://github.com/danielfm) or
 [LinkedIn](https://linkedin.com/in/danielfmartins)
 <a href="https://raw.githubusercontent.com/danielfm/resume/master/resume.pdf" title="Resume in PDF format"><span class="icon icon-file-pdf"></span></a>.
+
+If you wish to correspond with me securely, import my
+[PGP public key](/daniel_martins.asc) into your keyring. Alternatively, you
+can fetch my public key via
+[keys.openpgp.org](https://keys.openpgp.org/search?q=daniel.tritone%40gmail.com).
