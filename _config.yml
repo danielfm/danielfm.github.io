@@ -6,9 +6,9 @@ description:
 url: https://danielfm.me
 
 # Google analytics tracking
-analytics:
-  code: UA-761701-11
-  domain: danielfm.me
+# analytics:
+#   code:
+#   domain:
 
 # Owner/author information
 owner:
