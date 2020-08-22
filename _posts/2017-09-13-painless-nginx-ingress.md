@@ -7,7 +7,7 @@ description:
 date: 2017-09-13 00:00
 categories: [ops]
 tags: [ops, infrastructure, kubernetes, descomplica, cloud, ingress, nginx, webserver, optimizations]
-comments: true
+comments: false
 image:
   feature: production-ingress/cover.jpg
 ---
