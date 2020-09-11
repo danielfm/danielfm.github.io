@@ -95,7 +95,7 @@ blockquote {
 
 code {
   color: $grey-dark;
-  font-family: "Monaco", "Courier New", "Courier";
+  font-family: "Monaco", "Courier New", "Courier", monospace;
   font-size: .75em;
   font-weight: bold;
 }
@@ -108,7 +108,7 @@ div.highlight {
   overflow-x: auto;
 
   code {
-    font-family: "Monaco", "Courier New", "Courier";
+    font-family: "Monaco", "Courier New", "Courier", monospace;
     font-size: 1em;
     font-weight: inherit;
 
