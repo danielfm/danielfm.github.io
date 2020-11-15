@@ -32,5 +32,5 @@ visit my profile at [GitHub](https://github.com/danielfm) or
 <a href="https://raw.githubusercontent.com/danielfm/resume/master/resume.pdf" title="Resume in PDF format"><span class="icon icon-file-pdf"></span></a>.
 
 If you wish to correspond with me securely, encrypt your e-mail with my
-[PGP public key](/daniel_martins.asc) or send me an e-mail via some
+[PGP public key](/daniel_martins.asc) or send me an e-mail from another
 [ProtonMail](https://protonmail.com/) address.
