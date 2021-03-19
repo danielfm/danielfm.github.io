@@ -1,0 +1,53 @@
+baseUrl: https://danielfm.me
+languageCode: en-us
+title: Daniel Martins
+
+theme: hugo-tania
+
+enableEmoji: true
+
+privacy:
+  disqus:
+    disable: true
+  googleAnalytics:
+    disable: true
+  instagram:
+    disable: true
+  twitter:
+    disable: true
+  vimeo:
+    disable: true
+  youtube:
+    disable: true
+
+menu:
+  header:
+  - name: Blog
+    url: /
+    weight: 1
+  - name: About
+    url: /about/
+  footer:
+  - name: PGP
+    url: /daniel_martins.asc
+  - name: RSS
+    url: /index.xml
+
+markup:
+  highlight:
+    noClasses: false
+    lineNos: true
+  goldmark:
+    renderer:
+      unsafe: true
+
+params:
+  titleEmoji: '👨‍💻'
+
+  mainSections:
+    - post
+
+  socialOptions:
+    github: https://github.com/danielfm
+    linkedin: https://www.linkedin.com/in/danielfmartins/
+    twitter: https://twitter.com/danielfmt
