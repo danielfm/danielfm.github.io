@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Daniel Martins</title><link>https://danielfm.me/</link><description>Recent content on Daniel Martins</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 22 Feb 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://danielfm.me/" rel="self" type="application/rss+xml"/><item><title>Articles</title><link>https://danielfm.me/articles/</link><pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate><guid>https://danielfm.me/articles/</guid><description/></item><item><title>Projects</title><link>https://danielfm.me/projects/</link><pubDate>Sat, 22 Feb 2020 00:00:00 +0000</pubDate><guid>https://danielfm.me/projects/</guid><description/></item><item><title>Posts</title><link>https://danielfm.me/post/</link><pubDate>Wed, 13 Sep 2017 00:00:00 +0000</pubDate><guid>https://danielfm.me/post/</guid><description/></item><item><title>About</title><link>https://danielfm.me/about/</link><pubDate>Sun, 01 Apr 2012 00:00:00 +0000</pubDate><author>Daniel Martins</author><guid>https://danielfm.me/about/</guid><description>
+&lt;p>My name is &lt;strong>Daniel Martins&lt;/strong> and I&amp;rsquo;m a senior software engineer currently
+working as a SRE at
+&lt;a href="https://www.jusbrasil.com.br">Jusbrasil&lt;/a>, one of the fastest growing LawTech
+startups in Brazil.&lt;/p>
+&lt;p>I&amp;rsquo;m passionate about open source software, programming languages (specially the
+weird ones), machine learning, and pretty much any computer science magic you
+might think of.&lt;/p>
+&lt;p>I currently live in Rio de Janeiro, although I was born and grew up near São
+Paulo. When I&amp;rsquo;m not coding, I like to
+&lt;a href="https://trakt.tv/user/danielfmt">watch TV&lt;/a>,
+&lt;a href="https://open.spotify.com/user/danielfmt">listen to music&lt;/a>,
+play the guitar, and have some beer with my friends.&lt;/p>
+&lt;p>You can find me at &lt;a href="https://github.com/danielfm">GitHub&lt;/a> or
+&lt;a href="https://linkedin.com/in/danielfmartins">LinkedIn&lt;/a>. My resume is also available in
+&lt;a href="https://raw.githubusercontent.com/danielfm/resume/master/resume.pdf">PDF version&lt;/a>.&lt;/p>
+&lt;p>If you wish to talk to me securely, send me an &lt;a href="mailto:hey@danielfm.me">email&lt;/a>
+encrypted with my &lt;a href="https://danielfm.me/daniel_martins.asc">PGP public key&lt;/a>.&lt;/p></description></item></channel></rss>

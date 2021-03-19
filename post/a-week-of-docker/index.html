@@ -1,0 +1,208 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=theme-color content="dark"><title>A Week Of Docker | Daniel Martins</title><link rel=stylesheet href=/sass/main.min.4e90cee935c47394b47f9cb7ffe8e3ffab18b88d82fea203918cc3f92eec5eb2.css></head><body class=dark><nav class=navbar><div class=container><div class=flex><div><a class=brand href=/><span class=emoji>👨‍💻</span>
+Daniel Martins</a></div><div class=flex><a href=/>Blog</a>
+<a href=/about/>About</a>
+<button id=dark-mode-button></button></div></div></div></nav><main><div class=container><article><header class=article-header><div class=thumb><div><h1>A Week Of Docker</h1><div class=post-meta><div>By Daniel Martins on <time>August 15, 2014</time></div><div class=tags><a href=/tags/docker/>docker</a>
+<a href=/tags/fig/>fig</a>
+<a href=/tags/tips/>tips</a>
+<a href=/tags/deployment/>deployment</a></div></div></div></div></header></article><div class=article-post><p>If you got here, the chances are you heard the fuss around
+<a href=http://docker.com>Docker</a> and how it&rsquo;s supposed to change the way we deploy
+applications.</p><p>According to the <a href=https://docs.docker.com/>official website</a>, Docker is&mldr;</p><blockquote><p>&mldr;a platform for developers and sysadmins to develop, ship, and run
+applications. Docker lets you quickly assemble applications from components
+and eliminates the friction that can come when shipping code. Docker lets
+you get your code tested and deployed into production as fast as possible.</p></blockquote><p>I&rsquo;m not here to sell you anything; apparently there are too many people doing
+that already. Instead, I&rsquo;m going to document my experiences trying to
+&ldquo;Dockerize&rdquo; a simple <a href=http://rubyonrails.org/>Rails</a> application and show you
+some things I learned along the way.</p><h2 id=the-application>The Application</h2><p>I few months ago I built <a href=https://github.com/danielfm/texbin>TeXBin</a>, a
+simple Rails application where you can post a <code>.tex</code> file and get a URL for its
+PDF version. The code was sitting in my laptop without being used, so why not
+use it as guinea pig in my first attempt to use Docker? :-)</p><p>The proposed stack is composed by three components: the application itself, a
+<a href=http://mongodb.org>MongoDB</a> instance, and a <a href=http://nginx.org>Nginx</a> server
+to both serve the static content and act as a reverse proxy to the application.</p><p><img src=/images/a-week-of-docker/architecture.svg alt=Architecture></p><h2 id=wtf-is-a-container>WTF is a container?</h2><p>Docker is built on top of Linux kernel facilities, like <code>cgroups</code> and
+<code>namespaces</code>, and provides a way to create lightweight workspaces &ndash; or
+containers &ndash; that <em>run processes in isolation</em>.</p><blockquote><p>By using containers, resources can be isolated, services restricted, and
+processes provisioned to have a private view of the operating system with
+their own process ID space, file system structure, and network interfaces.
+Multiple containers can share the same kernel, but each container can be
+constrained to only use a defined amount of resources such as CPU, memory and
+I/O.</p><p>&ndash; <a href=http://en.wikipedia.org/wiki/Docker_(software)>Wikipedia</a></p></blockquote><p>So, in short, you get nearly all the benefits of virtualization with barely
+none of the execution overhead that comes with it.</p><h2 id=why-not-put-everything-within-the-same-container>Why not put everything within the same container?</h2><p>You get several benefits by exposing the different components of your
+application as different containers. Just to be clear, by <strong>component</strong> I mean
+some service that binds to a TCP port.</p><p>In particular, having different containers for different components gives us
+freedom to <em>move the pieces around or add new pieces</em> as we see fit, like:</p><ul><li>impose different usage limits (CPU shares and memory limits) for the database,
+the application, and the webserver</li><li>change from a simple MongoDB instance to a
+<a href=http://docs.mongodb.org/manual/replication/>replica set</a> composed by
+several containers across multiple hosts</li><li>spin up two or more application containers so you can perform
+<a href=http://martinfowler.com/bliki/BlueGreenDeployment.html>blue-green deployments</a>,
+improve concurrency and resource usage, etc</li></ul><p>In other words: it&rsquo;s a good idea to keep the moving parts, well, moving.</p><h2 id=the-dockerfile>The Dockerfile</h2><p>Containers are created from images, so first we need to create an image
+with the application code and all the required software packages.</p><p>Instead of doing things manually, Docker can build images automatically by
+reading the instructions from a <code>Dockerfile</code>, which is a text file that contains
+all the commands you would normally execute manually in order to build a Docker
+image.</p><p>This is the application&rsquo;s <code>Dockerfile</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=c># Base image (https://registry.hub.docker.com/_/ubuntu/)</span><span class=err>
+</span><span class=err></span><span class=k>FROM</span><span class=s> ubuntu</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Install required packages</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> apt-get update<span class=err>
+</span><span class=err></span><span class=k>RUN</span> apt-get install -y ruby2.0 ruby2.0-dev bundler texlive-full<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Create directory from where the code will run</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> mkdir -p /texbin/app<span class=err>
+</span><span class=err></span><span class=k>WORKDIR</span><span class=s> /texbin/app</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Make unicorn reachable to other containers</span><span class=err>
+</span><span class=err></span><span class=k>EXPOSE</span><span class=s> 3000</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Container should behave like a standalone executable</span><span class=err>
+</span><span class=err></span><span class=k>CMD</span> <span class=p>[</span><span class=s2>&#34;start&#34;</span><span class=p>]</span><span class=err>
+</span><span class=err></span><span class=k>ENTRYPOINT</span> <span class=p>[</span><span class=s2>&#34;foreman&#34;</span><span class=p>]</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Install the necessary gems</span><span class=err>
+</span><span class=err></span><span class=k>ADD</span> Gemfile /texbin/app/Gemfile<span class=err>
+</span><span class=err></span><span class=k>ADD</span> Gemfile.lock /texbin/app/Gemfile.lock<span class=err>
+</span><span class=err></span><span class=k>RUN</span> bundle install<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Copy application code to container</span><span class=err>
+</span><span class=err></span><span class=k>ADD</span> . /texbin/app/<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Try not to add steps after the last ADD so we can use the</span><span class=err>
+</span><span class=err></span><span class=c># Docker build cache more efficiently</span><span class=err>
+</span></code></pre></td></tr></table></div></div><p>Information about the individual commands can be obtained
+<a href=https://docs.docker.com/reference/builder/>here</a>.</p><h3 id=1supstsup-tip-kiss-rvm-goodbye>1<sup>st</sup> Tip: Kiss RVM Goodbye</h3><p>Why do you need RVM if the application will live inside a controlled and
+isolated environment?</p><p>The only reason you might want to do that is because you need to install a
+particular version of Ruby that you can&rsquo;t find via traditional OS package
+managers. If that&rsquo;s the case, you&rsquo;ll be better off installing the Ruby version
+you want from the source code.</p><p>Using RVM from within a Docker container is not a pleasant experience; every
+command must run inside a login shell session and you&rsquo;ll have problems using
+<code>CMD</code> together with <code>ENTRYPOINT</code>.</p><h3 id=2supndsup-tip-optimize-for-the-build-cache>2<sup>nd</sup> Tip: Optimize for the Build Cache</h3><p>Docker stores intermediate images after successfully executing each command in
+the <code>Dockerfile</code>. This is a great feature; if any step fails along the way, you
+can fix the problem and the next build will reuse the cache built up until that
+last successful command.</p><p>Instructions like <code>ADD</code> are not cache friendly though. That&rsquo;s why it&rsquo;s a good
+practice to only <code>ADD</code> stuff as late as possible in the <code>Dockerfile</code> since any
+changes in the files &ndash; or their metadata &ndash; will invalidate the build cache for
+all subsequent instructions.</p><p>Which leads us to&mldr;</p><h3 id=3suprdsup-tip-dont-forget-the-dockerignore>3<sup>rd</sup> Tip: Don&rsquo;t Forget the <code>.dockerignore</code></h3><p>A really important step is to avoid <code>ADD</code>ing irrelevant files to the
+container, like <code>README</code>, <code>fig.yml</code>, <code>.git/</code>, <code>logs/</code>, <code>tmp/</code>, and others.</p><p>If you are familiar with <code>.gitignore</code>, the idea is the same: just create a
+<code>.dockerignore</code> file and put there the patterns you want to ignore. This wil
+help keep the image small and the build fast by decreasing the chance of cache
+busting.</p><h2 id=testing-the-images>Testing the Images</h2><p>To run the application, first we&rsquo;ll need a container that exposes a single
+MongoDB server:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>$ docker run --name texbin_mongodb_1 -d mongo
+</code></pre></td></tr></table></div></div><p>Then you have to build the application image and start a new container:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>$ docker build -t texbin:dev .
+$ docker run --name texbin_app_1 -d --link texbin_mongodb_1:mongodb -p 3000:3000 texbin:dev
+</code></pre></td></tr></table></div></div><p>Learning how <a href=https://docs.docker.com/userguide/dockerlinks/>container linking</a>
+and <a href=https://docs.docker.com/userguide/dockervolumes/>volumes</a> work is
+essential if you want to understand how to &ldquo;plug&rdquo; containers together.</p><p><strong>Note:</strong> The project also includes a <code>Dockerfile</code> for the
+<a href=https://github.com/danielfm/texbin/tree/master/config/docker/nginx>Nginx container</a>
+which I won&rsquo;t show here because it doesn&rsquo;t bring anything new to the table.</p><p>Now <code>docker ps</code> should display two running containers. If everything&rsquo;s
+working, you should be able to access the application at
+<a href=http://localhost:3000>http://localhost:3000</a>. To see the logs, run <code>docker logs texbin_app_1</code>.</p><p><img src=/images/a-week-of-docker/screenshot.png alt=Screenshot></p><h2 id=docker-in-development>Docker in Development</h2><p>It turns out it&rsquo;s quite easy to automate these last steps with
+<a href=http://www.fig.sh/>Fig</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-yaml data-lang=yaml><span class=c># fig.yml</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>mongodb</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mongo</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>app</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>build</span><span class=p>:</span><span class=w> </span><span class=l>.</span><span class=w>
+</span><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span>- <span class=m>3000</span><span class=p>:</span><span class=m>3000</span><span class=w>
+</span><span class=w>  </span><span class=nt>links</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span>- <span class=l>mongodb:mongodb</span><span class=w>
+</span><span class=w>  </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span>- <span class=l>.:/texbin/app</span><span class=w>
+</span></code></pre></td></tr></table></div></div><p>Then, run <code>fig up</code> in the terminal in order to build the images, start the
+containers, and link them.</p><p>The only difference between this and the commands we ran manually before is
+that now we&rsquo;re mounting the hosts&rsquo;s current directory to container&rsquo;s
+<code>/texbin/app</code> so that we can view our changes to the application in real time.</p><p>Try changing some <code>.html.erb</code> template and refreshing the browser.</p><h2 id=defining-new-environments>Defining New Environments</h2><p>The goal is to run the same application in production, but with a different
+configuration, right? A simple way to &ndash; sort of &ndash; solve this is by creating
+another image, based on the previous one, that changes the required
+configuration:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=c># Uses our previous image as base</span><span class=err>
+</span><span class=err></span><span class=k>FROM</span><span class=s> texbin</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Set the proper environment</span><span class=err>
+</span><span class=err></span><span class=k>ENV</span> RAILS_ENV production<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Custom settings for that environment</span><span class=err>
+</span><span class=err></span><span class=k>ADD</span> production_env /texbin/app/.env<span class=err>
+</span><span class=err></span><span class=k>ADD</span> production_mongoid.yml /texbin/app/config/mongoid.yml<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Precompile the assets</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> rake assets:precompile<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Exposes the public directory as a volume</span><span class=err>
+</span><span class=err></span><span class=k>VOLUME</span><span class=s> /texbin/app/public</span><span class=err>
+</span></code></pre></td></tr></table></div></div><p>If you know a better way to do this, please let me know in the comments.</p><h2 id=going-live>Going Live</h2><p>The first thing to do is to push your images to the server. There are plenty
+of ways to do that: <a href=https://registry.hub.docker.com/>the public registry</a>, a
+<a href=https://github.com/docker/docker-registry>private-hosted registry</a>, git, etc.
+Once the images are built, just repeat the procedure we did earlier and you&rsquo;re
+done.</p><p>But that&rsquo;s not everything. As you probably know, deploying an application
+involves <a href=http://www.oscon.com/oscon2014/public/schedule/detail/34136>a lot more</a>
+than just moving stuff to some remote servers. This means you&rsquo;ll still have to
+worry with things like deployment automation, monitoring (at host and container
+levels), logging, data migrations and backup, etc.</p><h2 id=conclusion>Conclusion</h2><p>I&rsquo;m glad I took the time to look at Docker. Despite its young age, it&rsquo;s a very
+impressive rapidly-evolving piece of technology with a lot of potential to
+radically change the DevOps landscape in the next couple of years.</p><p>However, Docker solves only one variable of a huge equation. You&rsquo;ll still have
+to take care of boring things like monitoring, and I imagine it&rsquo;s rather
+difficult &ndash; not to say impossible &ndash; to use Docker in production without
+<a href=https://github.com/newrelic/centurion>some layer of automation</a> on top of it.</p><p>Also, features like container linking, are somewhat limited and we&rsquo;ll probably
+see substantial improvements in
+<a href=https://github.com/docker/docker/milestones>future releases</a>. So stay tuned!</p></div></div><div class=container><nav class="flex container suggested"><a rel=prev href=/post/why-are-continuations-cool/ title="Previous post (older)"><span>Previous</span>
+Why Are Continuations So Darn Cool?</a>
+<a rel=next href=/post/five-months-of-kubernetes/ title="Next post (newer)"><span>Next</span>
+Five Months of Kubernetes</a></nav></div></main></main><footer class="footer flex"><section class=container><nav class=footer-links><a href=/daniel_martins.asc>PGP</a>
+<a href=/index.xml>RSS</a></nav></section><script async src=/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js></script></footer></body></html>

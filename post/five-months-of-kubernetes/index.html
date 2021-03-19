@@ -1,0 +1,114 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=theme-color content="dark"><title>Five Months of Kubernetes | Daniel Martins</title><link rel=stylesheet href=/sass/main.min.4e90cee935c47394b47f9cb7ffe8e3ffab18b88d82fea203918cc3f92eec5eb2.css></head><body class=dark><nav class=navbar><div class=container><div class=flex><div><a class=brand href=/><span class=emoji>👨‍💻</span>
+Daniel Martins</a></div><div class=flex><a href=/>Blog</a>
+<a href=/about/>About</a>
+<button id=dark-mode-button></button></div></div></div></nav><main><div class=container><article><header class=article-header><div class=thumb><div><h1>Five Months of Kubernetes</h1><div class=post-meta><div>By Daniel Martins on <time>September 14, 2016</time></div><div class=tags><a href=/tags/ops/>ops</a>
+<a href=/tags/infrastructure/>infrastructure</a>
+<a href=/tags/kubernetes/>kubernetes</a>
+<a href=/tags/aws/>aws</a>
+<a href=/tags/beanstalk/>beanstalk</a></div></div></div></div></header></article><div class=article-post><p>For the past year, <a href=https://descomplica.com.br>Descomplica</a> moved towards a more
+service-oriented architecture for its core components (auth, search, etc) and
+we&rsquo;ve been using <a href=http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html>Elastic Beanstalk</a>
+from the start to orchestrate the deployment of those services to AWS.</p><p>It was a good decision at the time. In general, Elastic Beanstalk works fine
+and has a very gentle learning curve; it didn&rsquo;t take long for all teams to start
+using it for their projects.</p><p>Fast-forward a few months, everything was nice and good. Our old problems were
+solved, but - as you might have guessed - we had new ones to worry about.</p><h2 id=cost-issues>Cost Issues</h2><p>In Elastic Beanstalk, each EC2 instance runs exactly one application container<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.
+This means that, if you follow reliability best practices, you&rsquo;ll have two or more
+instances (spread across multiple <a href=http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html>availability zones</a>) for each application.
+You might need even more instances if you have other environments besides the
+production one, i.e. staging.</p><p>Anyway, you&rsquo;ll end up having multiple dedicated instances per service which,
+depending on your workload, will sit there doing nothing most of the time.</p><p>We needed to find a way to use our available compute resources more wisely.</p><h2 id=the-winner>The Winner</h2><p>After looking around for alternatives to ECS, <a href=http://kubernetes.io>Kubernetes</a>
+seemed to be the right one for us.</p><blockquote><p>Kubernetes is a container orchestration tool that builds upon 15 years of
+experience of running production workloads at Google, combined with
+best-of-breed ideas and practices from the community.</p></blockquote><p>Although Kubernetes is a feature-rich project, a few key features caught our
+attention: <a href=http://kubernetes.io/docs/user-guide/namespaces/>namespaces</a>, <a href=http://kubernetes.io/docs/user-guide/deployments/>automated rollouts and rollbacks</a>,
+<a href=http://kubernetes.io/docs/user-guide/services/>service discovery via DNS</a>,
+<a href=http://kubernetes.io/docs/user-guide/horizontal-pod-autoscaling/>automated container scaling based on resource usage</a>,
+and of course, the promise of a <a href=http://kubernetes.io/docs/user-guide/pod-states/#container-probes>self-healing system</a>.</p><p>Kubernetes is somewhat opinionated around how containers are supposed to be
+organized and networked, but this should not be a problem if your service
+follows the <a href=https://12factor.net/>Twelve-Factor</a> practices.</p><h2 id=our-path-to-production>Our Path to Production</h2><figure><img src=/images/five-months-of-kubernetes/five-months.png alt="Project activity graph"><figcaption><p>This is where it all started.</p></figcaption></figure><p>In order to ensure Kubernetes was a viable option for us, the first thing we
+did was perform some reliability tests to make sure it could handle failure
+modes such as dying nodes, killed Kubelet/Proxy/Docker daemons, and availability
+zone outages.</p><p>It&rsquo;s impossible to anticipate all the ways things can go wrong, but in the end,
+we were very impressed by how Kubernetes managed to handle these failures.</p><p>At that time, we used <a href=http://kubernetes.io/docs/getting-started-guides/binary_release/>kube-up</a>
+to bootstrap our test clusters. This tool, although it served its purpose, not
+always worked as expected; it suffered from a number of issues, such as poorly
+chosen defaults, random timeouts that left the stack only half-created, and
+inconsistent behavior when destroying the cluster causing orphan resources
+to be left behind<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>.</p><p>Once we agreed that Kubernetes was the way to go, we needed a more reliable
+way to create and destroy our Kubernetes clusters.</p><h3 id=enter-kube-aws>Enter kube-aws</h3><p><a href=https://github.com/coreos/coreos-kubernetes/tree/master/multi-node/aws>kube-aws</a> is a tool created by some good guys from CoreOS. The cool
+thing about it is that it uses <a href=https://aws.amazon.com/cloudformation/>CloudFormation</a> under the hoods,
+which gives us some neat advantages.</p><p>The first obvious advantage is that it&rsquo;s very easy to create and destroy
+clusters without leaving anything silently hanging around.</p><p>Another feature is that, unlike kube-up, you can create a cluster in an existing
+VPC so all services running in Kubernetes have access to your existing
+AWS resources - such as <a href=https://aws.amazon.com/rds/>relational databases</a> - right off the bat.</p><p>In fact, you can run multiple clusters at the same time in the same VPC. This
+has a nice side-effect in which you can treat each cluster as an immutable
+piece of infrastructure; instead of modifying a running cluster - and risking
+break something - you simply create a new cluster and gradually shift traffic
+from the old one to the new in a way that any incidents has limited impact.</p><p>The final and probably the most useful feature is that you can easily customize
+nearly every aspect of the cluster provisioning configuration to make it fit
+your own needs. In our case, we added
+<a href=https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/>cluster level logging</a> that ingests application logs to
+<a href=https://sumologic.com>Sumologic</a>, <a href=https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/cluster-monitoring>cluster monitoring</a> with
+<a href=https://www.influxdata.com>InfluxDB</a> and <a href=http://grafana.org>Grafana</a>, <a href=http://kubernetes.io/docs/admin/authorization/#abac-mode>ABAC-based authorization</a>,
+among other things.</p><h3 id=the-first-environment>The First Environment</h3><p>After solving the problem of reliably creating and destroying clusters, we felt
+confident to start migrating our staging environment over to Kubernetes.</p><p>It was easy enough to manually create the yaml manifests for the first
+<a href=http://kubernetes.io/docs/user-guide/deployments/>deployments</a>, but we needed an automated way to deploy new
+application images as soon as they were built by our continuous integration
+system.</p><p>Just as a proof of concept, we quickly hacked together a small function in
+<a href=https://aws.amazon.com/documentation/lambda/>AWS Lambda</a> (based on <a href=https://aws.amazon.com/blogs/compute/dynamic-github-actions-with-aws-lambda/>this article</a>) that
+automatically updated the corresponding deployment object whenever it
+received a merge notification in which the tests passed.</p><blockquote><p>This small Lambda function has now evolved into a major component in our
+delivery pipeline, orchestrating deployments to other environments as well,
+including production.</p></blockquote><p>With this done, migrating staging services from Beanstalk to Kubernetes was
+pretty straightforward. First, we created one DNS record for each service (each
+initially pointing to the legacy deployment in Elastic Beanstalk) and made sure
+that all services referenced each other via this DNS. Then, it was just a matter
+of changing those DNS records to point the corresponding
+<a href=http://kubernetes.io/docs/user-guide/services/>Kubernetes-managed load balancers</a>.</p><p>To ensure every part of the pipeline was working as expected, we spent some time
+monitoring all staging deployments looking for bugs and polishing things up
+as we could.</p><h3 id=more-tests-more-learning>More Tests, More Learning</h3><p>Before deploying our first production service to Kubernetes, we did some load
+testing to find out the optimal configuration for the
+<a href=http://kubernetes.io/docs/user-guide/compute-resources/>resource requirements</a> needed by each service and out how many pods
+we needed to handle the current traffic.</p><figure><img src=/images/five-months-of-kubernetes/grafana.png alt="Grafana dashboard showing CPU and memory usage for a container"><figcaption><p>This is where monitoring comes in handy.</p></figcaption></figure><p>Observing how your services behave under load and how much compute they need
+is <em>essential</em>.</p><p>Also take some time to understand how
+<a href=https://github.com/kubernetes/kubernetes/blob/master/docs/design/resource-qos.md#qos-classes>QoS classes</a> work in Kubernetes so you have a more fine control over
+which pods gets killed in the case of memory pressure. This is particularly
+important if you, like us, share the same cluster for all environments.</p><h4 id=tip-enable-cross-zone-load-balancing-aws><strong>Tip.</strong> Enable Cross-Zone Load Balancing (AWS)</h4><p>This is <a href=https://github.com/kubernetes/kubernetes/pull/30695>already fixed</a> in Kubernetes 1.4, but for now, if
+you expose your services via the <a href=http://kubernetes.io/docs/user-guide/services/#type-loadbalancer>LoadBalancer type</a>, don&rsquo;t forget to
+manually enable <a href=https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-disable-crosszone-lb.html>cross-zone load balancing</a> for the corresponding
+ELB; if you don&rsquo;t, you might notice uneven balancing across your application
+pods if they are spread in nodes from different availability zones.</p><h4 id=tip-give-kube-system-some-love><strong>Tip.</strong> Give <code>kube-system</code> Some Love</h4><p>If you ever tried Kubernetes, you probably noticed there&rsquo;s a <code>kube-system</code>
+namespace there with a bunch of stuff in it; do yourself a favor and take some
+time to understand the role of each of those things.</p><p>For instance, take the <a href=https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns>DNS add-on</a>; it&rsquo;s rather common to see people having
+<a href=https://github.com/coreos/coreos-kubernetes/issues/533>issues</a> because they forgot to add more DNS pods to handle their
+ever-increasing workload.</p><h3 id=going-live>Going Live</h3><p>Instead of shifting all traffic at once, like we did in staging, we thought we
+needed to take a more careful approach and used <a href=http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html>weighted routing policy</a>
+to gradually shift traffic to the Kubernetes cluster.</p><figure><img src=/images/five-months-of-kubernetes/phaseout.png alt="Graph showing incoming request count to an application in Elastic Beanstalk"><figcaption><p>Elastic Beanstalk app ready to be killed. With 🔥.</p></figcaption></figure><p>Once we noticed no more requests were reaching the legacy Beanstalk environments,
+we went ahead and killed them.</p><p><strong>Update (Sep 21, 2016)</strong>: All major services were migrated to our new platform!
+These are the final numbers<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>:</p><ul><li>~53-63% decrease in monthly costs</li><li>~72-82% decrease in # of instances</li></ul><h2 id=beyond-production>Beyond Production</h2><p>Kubernetes gave us the power to almost effortlessly mold our delivery pipeline
+in a way we never thought possible. One example of such improvement is what we
+call here <em>development environments</em>.</p><figure><img src=/images/five-months-of-kubernetes/deploy-pending.png alt="GitHub status displaying the deployment status for the development environment of one application"><figcaption><p>Meet the Dungeon Master.</p></figcaption></figure><p>Whenever someone opens a Pull Request to one of our projects, the AWS Lambda
+function I mentioned earlier creates a temporary environment running the
+modifications introduced by the PR.</p><p>Also, whenever new code is pushed, this environment gets automatically updated
+as long as they pass the tests. Finally, when the PR is merged (or closed), the
+environment is deleted.</p><figure><img src=/images/five-months-of-kubernetes/deploy-success.png alt="GitHub status displaying the deployment was finished"><figcaption><p>Deployment updated, it&rsquo;s code review time!</p></figcaption></figure><p>This feature made our code reviews more thorough because the developers can
+actually see the changes running. This is even more useful for UX changes in
+front-end services; artists and product owners get the chance to validate the
+changes and share their inputs before the PR is merged.</p><p>To send the <a href=https://developer.github.com/v3/repos/statuses/>GitHub Status</a> notifications you see in these pictures,
+we implemented a small daemon in Go that monitors deployments to our
+<code>development</code> namespace and reconciles the deployment status for each revision.</p><h2 id=conclusion>Conclusion</h2><p>Kubernetes is a very complex piece of software that aims to solve a very complex
+problem, so expect to spend some time learning how its many pieces fit together
+before using it in your projects.</p><p>Kubernetes is production-ready, but avoid the temptation of trying to run
+<em>everything</em> on it. In our experience, Kubernetes does not offer a clean
+solution for a number of problems you might face, such as
+<a href=http://kubernetes.io/docs/user-guide/petset/>stateful applications</a>.</p><p>The documentation is not great as well, but initiatives like the
+<a href=https://kubernetesbootcamp.github.io/kubernetes-bootcamp/index.html>Kubernetes Bootcamp</a> and <a href=https://twitter.com/kelseyhightower>Kelsey Hightower</a>&rsquo;s
+<a href=https://github.com/kelseyhightower/kubernetes-the-hard-way>Kubernetes The Hard Way</a> gives me hope that this will no longer be a
+problem in the near future.</p><p>Without Kubernetes, I don&rsquo;t know how - or if - we could have accomplished
+all the things we did in such a small period of time with such a small
+engineering team<sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup>.</p><p>We hope to continue building on Kubernetes to make our delivery platform even
+more dynamic and awesome!</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>Each AWS region seems to evolve at a different pace. At the time of this writing, multi-container Beanstalk applications and <a href=https://aws.amazon.com/ecs/>ECS</a> were not available for the <code>sa-east-1</code> region. Almost all of our users live in Brazil, so moving out to a different region wasn&rsquo;t really an option. <a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>There are a number of initiatives to come up with a better tool to create and manage Kubernetes clusters, such as <a href=https://github.com/kubernetes/kops>kops</a>. <a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p>Range depends on the workload. <a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:4 role=doc-endnote><p>The ops/delivery team is actually a one-engineer team: me! <a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div></div><div class=container><nav class="flex container suggested"><a rel=prev href=/post/a-week-of-docker/ title="Previous post (older)"><span>Previous</span>
+A Week Of Docker</a>
+<a rel=next href=/post/painless-nginx-ingress/ title="Next post (newer)"><span>Next</span>
+Pain(less?) NGINX Ingress</a></nav></div></main></main><footer class="footer flex"><section class=container><nav class=footer-links><a href=/daniel_martins.asc>PGP</a>
+<a href=/index.xml>RSS</a></nav></section><script async src=/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js></script></footer></body></html>

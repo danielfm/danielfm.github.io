@@ -1,0 +1,709 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=theme-color content="dark"><title>Pain(less?) NGINX Ingress | Daniel Martins</title><link rel=stylesheet href=/sass/main.min.4e90cee935c47394b47f9cb7ffe8e3ffab18b88d82fea203918cc3f92eec5eb2.css></head><body class=dark><nav class=navbar><div class=container><div class=flex><div><a class=brand href=/><span class=emoji>👨‍💻</span>
+Daniel Martins</a></div><div class=flex><a href=/>Blog</a>
+<a href=/about/>About</a>
+<button id=dark-mode-button></button></div></div></div></nav><main><div class=container><article><header class=article-header><div class=thumb><div><h1>Pain(less?) NGINX Ingress</h1><div class=post-meta><div>By Daniel Martins on <time>September 13, 2017</time></div><div class=tags><a href=/tags/ops/>ops</a>
+<a href=/tags/infrastructure/>infrastructure</a>
+<a href=/tags/kubernetes/>kubernetes</a>
+<a href=/tags/k8s/>k8s</a>
+<a href=/tags/cloud/>cloud</a>
+<a href=/tags/ingress/>ingress</a>
+<a href=/tags/nginx/>nginx</a>
+<a href=/tags/webserver/>webserver</a>
+<a href=/tags/optimization/>optimization</a></div></div></div></div></header></article><div class=article-post><p>So you have a <a href=https://kubernetes.io>Kubernetes</a> cluster and are using (or
+considering using) the
+<a href=https://github.com/kubernetes/ingress-nginx>NGINX ingress controller</a>
+to forward outside traffic to in-cluster services. That&rsquo;s awesome!</p><p>The first time I looked at it, everything looked so easy; installing the NGINX
+ingress controller was one <code>helm install</code> away, so I did it. Then, after hooking
+up the DNS to the load balancer and creating a few
+<a href=https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource>Ingress resources</a>,
+I was in business.</p><p>Fast-forward a few months, all external traffic for all environments
+(dev, staging, production) was going through the ingress servers. Everything was
+good. Until it wasn&rsquo;t.</p><p>We all know how it happens. First, you get excited about that shiny new thing.
+You start using it. Then, eventually, some shit happens.</p><h2 id=my-first-ingress-outage>My First Ingress Outage</h2><p>Let me start by saying that if you are not alerting on
+<a href=http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html>accept queue overflows</a>,
+well, you should.</p><figure><img src=/images/production-ingress/tcp-diagram.svg alt="TCP connection flow diagram"><figcaption><p>Do mind the queues.</p></figcaption></figure><p>What happened was that one of the applications being proxied through NGINX
+started taking too long to respond, causing connections to completely fill the
+<a href=http://nginx.org/en/docs/http/ngx_http_core_module.html#listen>NGINX listen backlog</a>,
+which caused NGINX to quickly start dropping connections, including the ones
+being made by Kubernetes'
+<a href=https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/>liveness/readiness probes</a>.</p><p>What happens when some pod fails to respond to the liveness probes? Kubernetes
+thinks there&rsquo;s something wrong with the pod and restarts it. The problem is that
+this is one of those situations where restarting a pod will actually make more
+harm than good; the accept queue will overflow, again and again, causing Kubernetes
+to keep restarting the NGINX pods until they all started to crash-loop.</p><figure><img src=/images/production-ingress/listen-overflows.png alt="Graph showing surges of TCP listen overflow errors"><figcaption><p>TCP listen overflows as reported by <code>netstat</code>.</p></figcaption></figure><p>What are the lessons learned from this incident?</p><ul><li>Know every bit of your NGINX configuration. Look for anything that should
+(or should not) be there, and don&rsquo;t blindingly trust any default values.</li><li>Most Linux distributions do not provide an optimal configuration for running
+high load web servers out-of-the-box; double-check the values for each kernel
+param via <code>sysctl -a</code>.</li><li>Make sure to measure the latency across your services and set the various
+timeouts based on the expected upper bound + some slack to accommodate slight
+variations.</li><li>Change your applications to drop requests or degrade gracefully when
+overloaded. For instance, in NodeJS applications,
+<a href=https://medium.com/springworks-engineering/node-js-profiling-event-loop-lag-flame-charts-539e04723e84>latency increases</a>
+in the event loop might indicate the server is in trouble keeping up with the
+current traffic.</li><li>Do not use just one NGINX ingress controller deployment for balancing across
+all types of workloads/environments.</li></ul><h3 id=the-importance-of-observability>The Importance of Observability</h3><p>Before detailing each of the previous points, my 0th advice is to <em>never</em> run a
+production Kubernetes cluster (or anything else for that matter) without proper
+monitoring; by itself, monitoring won&rsquo;t prevent bad things from happening, but
+collecting telemetry data during such incidents will give you means to root-cause
+and fix most issues you&rsquo;ll find along the way.</p><figure><img src=/images/production-ingress/netstat-metrics.png alt="Grafana dashboard showing a few netstat metrics."><figcaption><p>Some useful <code>node_netstat_*</code> metrics.</p></figcaption></figure><p>If you choose to jump on the <a href=https://prometheus.io>Prometheus</a> bandwagon, you can
+leverage <a href=https://github.com/prometheus/node_exporter>node_exporter</a> in order to
+collect node-level metrics that could help you detect situations like the one I&rsquo;ve
+just described.</p><figure><img src=/images/production-ingress/ingress-metrics.png alt="Grafana dashboard for displaying NGINX ingress metrics."><figcaption><p>Some of the metrics exposed by the NGINX ingress controller.</p></figcaption></figure><p>Also, the NGINX ingress controller itself exposes Prometheus metrics; make
+sure to collect those as well.</p><h2 id=know-your-config>Know Your Config</h2><p>The beauty of ingress controllers is that you delegate the task of generating and
+reloading the proxy configuration to this fine piece of software and never worry
+about it; you don&rsquo;t even have to be familiar with the underlying technology
+(NGINX in this case). Right? <strong>Wrong!</strong></p><p>If you haven&rsquo;t done that already, I urge you to take a look at the configuration
+your ingress controller generated for you. For the NGINX ingress controller,
+all you need to do is grab the contents of <code>/etc/nginx/nginx.conf</code> via <code>kubectl</code>.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>kubectl -n &lt;namespace&gt; <span class=nb>exec</span> &lt;nginx-ingress-controller-pod-name&gt; -- /
+   cat /etc/nginx/nginx.conf &gt; ./nginx.conf
+</code></pre></td></tr></table></div></div><p>Now look for anything that&rsquo;s not compatible with your setup. Want an example? Let&rsquo;s start with <a href=http://nginx.org/en/docs/ngx_core_module.html#worker_processes><code>worker_processes auto;</code></a></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-nginx data-lang=nginx><span class=c1># $ cat ./nginx.conf
+</span><span class=c1></span><span class=k>daemon</span> <span class=no>off</span><span class=p>;</span>
+
+<span class=k>worker_processes</span> <span class=s>auto</span><span class=p>;</span>
+<span class=k>pid</span> <span class=s>/run/nginx.pid</span><span class=p>;</span>
+
+<span class=k>worker_rlimit_nofile</span> <span class=mi>1047552</span><span class=p>;</span>
+<span class=k>worker_shutdown_timeout</span> <span class=s>10s</span> <span class=p>;</span>
+
+<span class=k>events</span> <span class=p>{</span>
+    <span class=kn>multi_accept</span>        <span class=no>on</span><span class=p>;</span>
+    <span class=kn>worker_connections</span>  <span class=mi>16384</span><span class=p>;</span>
+    <span class=kn>use</span>                 <span class=s>epoll</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=k>http</span> <span class=p>{</span>
+    <span class=kn>real_ip_header</span>      <span class=s>X-Forwarded-For</span><span class=p>;</span>
+    <span class=c1># ...
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=c1># ...
+</span></code></pre></td></tr></table></div></div><blockquote><p>The optimal value depends on many factors including (but not limited to) the
+number of CPU cores, the number of hard disk drives that store data, and load
+pattern. When one is in doubt, setting it to the number of available CPU cores
+would be a good start (the value “<code>auto</code>” will try to autodetect it).</p></blockquote><p>Here&rsquo;s the first gotcha: as of now (will it ever be?), NGINX is not
+<a href=https://en.wikipedia.org/wiki/Cgroups>Cgroups</a>-aware, which means the <code>auto</code>
+value will use the number of <em>physical CPU cores</em> on the host machine, not the
+number of &ldquo;virtual&rdquo; CPUs as defined by the Kubernetes
+<a href=https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/>resource requests/limits</a>.</p><p>Let&rsquo;s run a little experiment. What happens when you try to load the following
+NGINX configuration file from a container limited to only one CPU in a dual-core
+server? Will it spawn one or two worker processes?</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-nginx data-lang=nginx><span class=c1># $ cat ./minimal-nginx.conf
+</span><span class=c1></span>
+<span class=k>worker_processes</span> <span class=s>auto</span><span class=p>;</span>
+
+<span class=k>events</span> <span class=p>{</span>
+  <span class=kn>worker_connections</span> <span class=mi>1024</span><span class=p>;</span>
+<span class=p>}</span>
+
+<span class=k>http</span> <span class=p>{</span>
+  <span class=kn>server</span> <span class=p>{</span>
+    <span class=kn>listen</span> <span class=mi>80</span><span class=p>;</span>
+    <span class=kn>server_name</span> <span class=s>localhost</span><span class=p>;</span>
+
+    <span class=kn>location</span> <span class=s>/</span> <span class=p>{</span>
+      <span class=kn>root</span>  <span class=s>html</span><span class=p>;</span>
+      <span class=kn>index</span> <span class=s>index.html</span> <span class=s>index.htm</span><span class=p>;</span>
+    <span class=p>}</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>Thus, if you intend to restrict the NGINX ingress CPU share, it might not make
+sense to spawn a large number of workers per container. If that&rsquo;s the case, make
+sure to explicitly set the desired number in the <code>worker_processes</code> directive.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-text data-lang=text>$ docker run --rm --cpus=&#34;1&#34; -v `pwd`/minimal-nginx.conf:/etc/nginx/nginx.conf:ro -d nginx
+fc7d98c412a9b90a217388a094de4c4810241be62c4f7501e59cc1c968434d4c
+
+$ docker exec fc7 ps -ef | grep nginx
+root         1     0  0 21:49 pts/0    00:00:00 nginx: master process nginx -g daemon off;
+nginx        6     1  0 21:49 pts/0    00:00:00 nginx: worker process
+nginx        7     1  0 21:49 pts/0    00:00:00 nginx: worker process
+</code></pre></td></tr></table></div></div><p>Now take the <code>listen</code> directive; it does not specify the <code>backlog</code> parameter
+(which is <code>511</code> by default on Linux). If your kernel&rsquo;s <code>net.core.somaxconn</code> is
+set to, say, <code>1024</code>, you should also specify the <code>backlog=X</code> parameter
+accordingly. In other words, make sure your config is in tune with your kernel.</p><p>And please, don&rsquo;t stop there. Do this thought exercise to every line of the
+generated config. Hell, take at look at
+<a href=https://github.com/kubernetes/ingress-nginx/blob/master/rootfs/etc/nginx/template/nginx.tmpl>all the things</a>
+the ingress controller will let you change, and don&rsquo;t hesitate to
+change anything that does not fit your use case. Most NGINX directives can be
+<a href=https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/configmap.md>customized</a>
+via <code>ConfigMap</code> entries and/or annotations.</p><h3 id=kernel-params>Kernel Params</h3><p>Using ingress or not, make sure to always review and tune the kernel params
+of your nodes according to the expected workloads.</p><p>This is a rather complex subject on its own, so I have no intention of covering
+everything in this post; take a look at the <a href=#references>References</a> section
+for more pointers in this area.</p><h4 id=kube-proxy-conntrack-table>Kube-Proxy: Conntrack Table</h4><p>If you are using Kubernetes, I don&rsquo;t need to explain to you what
+<a href=https://kubernetes.io/docs/concepts/services-networking/service/>Services</a>
+are and what they are used for. However, I think it&rsquo;s important to understand
+in more detail how they work.</p><blockquote><p>Every node in a Kubernetes cluster runs a kube-proxy, which is
+responsible for implementing a form of virtual IP for <code>Services</code> of type
+other than <code>ExternalName</code>. In Kubernetes v1.0 the proxy was purely in
+userspace. In Kubernetes v1.1 an iptables proxy was added, but was not
+the default operating mode. Since Kubernetes v1.2, the iptables proxy is
+the default.</p></blockquote><p>In other words, all packets sent to a Service IP are forwarded/load-balanced to
+the corresponding <code>Endpoint</code>s (<code>address:port</code> tuples for all pods that match the
+<code>Service</code>
+<a href=https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/>label selector</a>)
+via iptables rules managed by <a href=https://kubernetes.io/docs/admin/kube-proxy/>kube-proxy</a>;
+connections to <code>Service</code> IPs are tracked by the kernel via the <code>nf_conntrack</code>
+module, and, as you might have guessed, this connection tracking information is
+stored in RAM.</p><p>As the values of different conntrack params need to be set in conformance with
+each other (ie. <code>nf_conntrack_max</code> and <code>nf_conntrack_buckets</code>), kube-proxy
+configures sane defaults for those as part of its bootstrapping procedure.</p><pre><code>$ kubectl -n kube-system logs &lt;some-kube-proxy-pod&gt;
+I0829 22:23:43.455969       1 server.go:478] Using iptables Proxier.
+I0829 22:23:43.473356       1 server.go:513] Tearing down userspace rules.
+I0829 22:23:43.498529       1 conntrack.go:98] Set sysctl 'net/netfilter/nf_conntrack_max' to 524288
+I0829 22:23:43.498696       1 conntrack.go:52] Setting nf_conntrack_max to 524288
+I0829 22:23:43.499167       1 conntrack.go:83] Setting conntrack hashsize to 131072
+I0829 22:23:43.503607       1 conntrack.go:98] Set sysctl 'net/netfilter/nf_conntrack_tcp_timeout_established' to 86400
+I0829 22:23:43.503718       1 conntrack.go:98] Set sysctl 'net/netfilter/nf_conntrack_tcp_timeout_close_wait' to 3600
+I0829 22:23:43.504052       1 config.go:102] Starting endpoints config controller
+...
+</code></pre><p>These are good defaults, but you might want to <a href=https://kubernetes.io/docs/admin/kube-proxy/>increase those</a>
+if your monitoring data shows you&rsquo;re running out of conntrack space. However,
+bear in mind that increasing these params will result in
+<a href=https://johnleach.co.uk/words/372/netfilter-conntrack-memory-usage>increased memory usage</a>,
+so be gentle.</p><figure><img src=/images/production-ingress/conntrack-usage.png alt="Grafana dashboard showing the conntrack usage."><figcaption><p>Conntrack usage monitoring.</p></figcaption></figure><h2 id=sharing-is-not-caring>Sharing Is (Not) Caring</h2><p>We used to have just a single NGINX ingress deployment responsible for proxying
+requests to all applications in all environments (dev, staging, production)
+until recently. I can say from experience this is <strong>bad</strong> practice;
+<em>don&rsquo;t put all your eggs in one basket.</em></p><p>I guess the same could be said about sharing one cluster for all environments,
+but we found that, by doing this, we get better resource utilization by allowing
+dev/staging pods to run on a best-effort QoS tier, taking up resources not
+used by production applications.</p><p>The trade-off is that this limits the things we can do to our cluster. For
+instance, if we decide to run a load test on a staging service, we need to be
+really careful or we risk affecting production services running in the same
+cluster.</p><p>Even though the level of isolation provided by containers is generally good, they
+still <a href=https://sysdig.com/blog/container-isolation-gone-wrong/>rely on shared kernel resources</a>
+that are subject to abuse.</p><h3 id=split-ingress-deployments-per-environment>Split Ingress Deployments Per Environment</h3><p>That being said, there&rsquo;s no reason not to use dedicated ingresses per
+environment. This will give you an extra layer of protection in case your
+dev/staging services get misused.</p><p>Some other benefits of doing so:</p><ul><li>You get the chance to use different settings for each environment if needed</li><li>Allow testing ingress upgrades in a more forgiving environment before rolling
+out to production</li><li>Avoid bloating the NGINX configuration with lots of upstreams and servers
+associated with ephemeral and/or unstable environments</li><li>As a consequence, your configuration reloads will be faster, and you&rsquo;ll have
+fewer configuration reload events during the day (we&rsquo;ll discuss later why you
+should strive to keep the number of reloads to a minimum)</li></ul><h4 id=ingress-classes-to-the-rescue>Ingress Classes To The Rescue</h4><p>One way to make different ingress controllers manage different <code>Ingress</code>
+resources in the same cluster is by using a different <strong>ingress class name</strong> per
+ingress deployment, and then annotate your <code>Ingress</code> resources to specify which
+one is responsible for controlling it.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-yaml data-lang=yaml><span class=c># Ingress controller 1</span><span class=w>
+</span><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>extensions/v1beta1</span><span class=w>
+</span><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Deployment</span><span class=w>
+</span><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>template</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>args</span><span class=p>:</span><span class=w>
+</span><span class=w>            </span>- <span class=l>/nginx-ingress-controller</span><span class=w>
+</span><span class=w>            </span>- --<span class=l>ingress-class=class-1</span><span class=w>
+</span><span class=w>            </span>- <span class=l>...</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=c># Ingress controller 2</span><span class=w>
+</span><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>extensions/v1beta1</span><span class=w>
+</span><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Deployment</span><span class=w>
+</span><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>template</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>args</span><span class=p>:</span><span class=w>
+</span><span class=w>            </span>- <span class=l>/nginx-ingress-controller</span><span class=w>
+</span><span class=w>            </span>- --<span class=l>ingress-class=class-2</span><span class=w>
+</span><span class=w>            </span>- <span class=l>...</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=c># This Ingress resource will be managed by controller 1</span><span class=w>
+</span><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>extensions/v1beta1</span><span class=w>
+</span><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Ingress</span><span class=w>
+</span><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>annotations</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>kubernetes.io/ingress.class</span><span class=p>:</span><span class=w> </span><span class=l>class-1</span><span class=w>
+</span><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>rules</span><span class=p>:</span><span class=w> </span><span class=l>...</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=c># This Ingress resource will be managed by controller 2</span><span class=w>
+</span><span class=w></span><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>extensions/v1beta1</span><span class=w>
+</span><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Ingress</span><span class=w>
+</span><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>annotations</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>kubernetes.io/ingress.class</span><span class=p>:</span><span class=w> </span><span class=l>class-2</span><span class=w>
+</span><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>rules</span><span class=p>:</span><span class=w> </span><span class=l>...</span><span class=w>
+</span></code></pre></td></tr></table></div></div><h2 id=ingress-reloads-gone-wrong>Ingress Reloads Gone Wrong</h2><p>At this point, we were already running a dedicated ingress controller for the
+production environment. Everything was running pretty smoothly until we
+decided to migrate a WebSocket application to Kubernetes + ingress.</p><p>Shortly after the migration, I started noticing a strange trend in memory usage
+for the production ingress pods.</p><figure><img src=/images/production-ingress/ingress-memory-issue.png alt="Grafana dashboard showing nginx-ingress containers leaking memory."><figcaption><p>What the hell is happening?!</p></figcaption></figure><p>Why was the memory consumption skyrocketing like this? After I <code>kubectl exec</code>’d
+into one of the ingress containers, what I found was a bunch of worker processes
+stuck in shutting down state for several minutes.</p><pre><code>root     17755 17739  0 19:47 ?        00:00:00 /usr/bin/dumb-init /nginx-ingress-controller --default-backend-service=kube-system/broken-bronco-nginx-ingress-be --configmap=kube-system/broken-bronco-nginx-ingress-conf --ingress-class=nginx-ingress-prd
+root     17765 17755  0 19:47 ?        00:00:08 /nginx-ingress-controller --default-backend-service=kube-system/broken-bronco-nginx-ingress-be --configmap=kube-system/broken-bronco-nginx-ingress-conf --ingress-class=nginx-ingress-prd
+root     17776 17765  0 19:47 ?        00:00:00 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf
+nobody   18866 17776  0 19:49 ?        00:00:05 nginx: worker process is shutting down
+nobody   19466 17776  0 19:51 ?        00:00:01 nginx: worker process is shutting down
+nobody   19698 17776  0 19:51 ?        00:00:05 nginx: worker process is shutting down
+nobody   20331 17776  0 19:53 ?        00:00:05 nginx: worker process is shutting down
+nobody   20947 17776  0 19:54 ?        00:00:03 nginx: worker process is shutting down
+nobody   21390 17776  1 19:55 ?        00:00:05 nginx: worker process is shutting down
+nobody   22139 17776  0 19:57 ?        00:00:00 nginx: worker process is shutting down
+nobody   22251 17776  0 19:57 ?        00:00:01 nginx: worker process is shutting down
+nobody   22510 17776  0 19:58 ?        00:00:01 nginx: worker process is shutting down
+nobody   22759 17776  0 19:58 ?        00:00:01 nginx: worker process is shutting down
+nobody   23038 17776  1 19:59 ?        00:00:03 nginx: worker process is shutting down
+nobody   23476 17776  1 20:00 ?        00:00:01 nginx: worker process is shutting down
+nobody   23738 17776  1 20:00 ?        00:00:01 nginx: worker process is shutting down
+nobody   24026 17776  2 20:01 ?        00:00:02 nginx: worker process is shutting down
+nobody   24408 17776  4 20:01 ?        00:00:01 nginx: worker process
+</code></pre><p>In order to understand why this happened, we must take a step back and look at how
+configuration reloads is implemented in NGINX.</p><blockquote><p>Once the master process receives the signal to reload configuration, it checks
+the syntax validity of the new configuration file and tries to apply the
+configuration provided in it. If this is a success, the master process starts
+new worker processes and sends messages to old worker processes, requesting
+them to shut down. Otherwise, the master process rolls back the changes and
+continues to work with the old configuration. Old worker processes, receiving
+a command to shut down, stop accepting new connections <strong>and continue to service
+current requests until all such requests are serviced. After that, the old
+worker processes exit.</strong></p></blockquote><p>Remember we are proxying WebSocket connections, which are long-running by nature;
+a WebSocket connection might take hours, or even days to close depending on the
+application. The NGINX server cannot know if it&rsquo;s okay to break up a connection
+during a reload, so it&rsquo;s up to you to make things easier for it. (One thing you
+can do is to have a strategy in place to actively close connections that are
+idle for far too long, both at the client and server-side; don&rsquo;t leave this as
+an afterthought)</p><p>Now back to our problem. If we have that many workers in that state, this means
+the ingress configuration got reloaded many times, and workers were unable to
+terminate due to the long-running connections.</p><p>That&rsquo;s indeed what happened. After some debugging, we found that the NGINX
+ingress controller was repeatedly generating a different configuration file due
+to changes in the ordering of upstreams and server IPs.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-diff data-lang=diff>I0810 23:14:47.866939       5 nginx.go:300] NGINX configuration diff
+I0810 23:14:47.866963       5 nginx.go:301] --- /tmp/a072836772	2017-08-10 23:14:47.000000000 +0000
+<span class=gi>+++ /tmp/b304986035	2017-08-10 23:14:47.000000000 +0000
+</span><span class=gi></span><span class=gu>@@ -163,32 +163,26 @@
+</span><span class=gu></span> 
+     proxy_ssl_session_reuse on;
+ 
+<span class=gd>-    upstream production-app-1-80 {
+</span><span class=gd></span><span class=gi>+    upstream upstream-default-backend {
+</span><span class=gi></span>         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.71.14:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.32.22:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.157.13:8080 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+<span class=gd>-    upstream production-app-2-80 {
+</span><span class=gd></span><span class=gi>+    upstream production-app-3-80 {
+</span><span class=gi></span>         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.110.13:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.109.195:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.82.66:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.79.124:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.59.21:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.45.219:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+     upstream production-app-4-80 {
+         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.109.177:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span>         server 10.2.12.161:3000 max_fails=0 fail_timeout=0;
+<span class=gd>-    }
+</span><span class=gd>-
+</span><span class=gd>-    upstream production-app-5-80 {
+</span><span class=gd>-        # Load balance algorithm; empty for round robin, which is the default
+</span><span class=gd>-        least_conn;
+</span><span class=gd>-        server 10.2.21.37:9292 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.65.105:9292 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.109.177:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+     upstream production-app-6-80 {
+<span class=gu>@@ -201,61 +195,67 @@
+</span><span class=gu></span>     upstream production-lap-production-80 {
+         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.45.223:8000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.21.36:8000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>         server 10.2.78.36:8000 max_fails=0 fail_timeout=0;
+<span class=gi>+        server 10.2.45.223:8000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>         server 10.2.99.151:8000 max_fails=0 fail_timeout=0;
+<span class=gd>-        server 10.2.21.36:8000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span>     }
+ 
+<span class=gd>-    upstream production-app-7-80{
+</span><span class=gd></span><span class=gi>+    upstream production-app-1-80 {
+</span><span class=gi></span>         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.79.126:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.35.105:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.114.143:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.50.44:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.149.135:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.45.155:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.71.14:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.32.22:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+<span class=gd>-    upstream production-app-8-80 {
+</span><span class=gd></span><span class=gi>+    upstream production-app-2-80 {
+</span><span class=gi></span>         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.53.23:5000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.110.22:5000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.35.91:5000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.45.221:5000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.110.13:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.109.195:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+<span class=gd>-    upstream upstream-default-backend {
+</span><span class=gd></span><span class=gi>+    upstream production-app-9-80 {
+</span><span class=gi></span>         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.157.13:8080 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.78.26:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.59.22:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.96.249:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.32.21:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.114.177:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.83.20:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.118.111:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.26.23:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.35.150:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.79.125:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.157.165:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+<span class=gd>-    upstream production-app-3-80 {
+</span><span class=gd></span><span class=gi>+    upstream production-app-5-80 {
+</span><span class=gi></span>         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.79.124:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.82.66:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.45.219:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.59.21:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.21.37:9292 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.65.105:9292 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+<span class=gd>-    upstream production-app-9-80 {
+</span><span class=gd></span><span class=gi>+    upstream production-app-7-80 {
+</span><span class=gi></span>         # Load balance algorithm; empty for round robin, which is the default
+         least_conn;
+<span class=gd>-        server 10.2.96.249:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.157.165:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.114.177:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.118.111:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.79.125:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.78.26:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.59.22:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.35.150:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.32.21:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.83.20:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd>-        server 10.2.26.23:3000 max_fails=0 fail_timeout=0;
+</span><span class=gd></span><span class=gi>+        server 10.2.114.143:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.79.126:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.45.155:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.35.105:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.50.44:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.149.135:3000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+    }
+</span><span class=gi>+
+</span><span class=gi>+    upstream production-app-8-80 {
+</span><span class=gi>+        # Load balance algorithm; empty for round robin, which is the default
+</span><span class=gi>+        least_conn;
+</span><span class=gi>+        server 10.2.53.23:5000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.45.221:5000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.35.91:5000 max_fails=0 fail_timeout=0;
+</span><span class=gi>+        server 10.2.110.22:5000 max_fails=0 fail_timeout=0;
+</span><span class=gi></span>     }
+ 
+     server {
+</code></pre></td></tr></table></div></div><p>This caused the NGINX ingress controller to reload its configuration several
+times per minute, making these shutting down workers pile up until the pod got
+<code>OOMKilled</code>.</p><p>Things got a lot better once I upgraded the NGINX ingress controller to a
+fixed version and specified the <code>--sort-backends=true</code> command line flag.</p><figure><img src=/images/production-ingress/ingress-reloads.png alt="Grafana dashboard showing number of nginx-ingress configuration reloads."><figcaption><p>Number of unnecessary reloads went down to zero after fix.</p></figcaption></figure><p>Thanks to <a href=https://github.com/aledbf>@aledbf</a> for his assistance in finding and
+fixing this bug!</p><h3 id=further-minizing-config-reloads>Further Minizing Config Reloads</h3><p>The lesson here is to keep in mind that <em>configuration reloads are expensive
+operations</em> and it&rsquo;s a good idea to avoid those especially when proxying
+WebSocket connections. This is why we decided to create a specific ingress
+controller deployment just for proxying these long-running connections.</p><p>In our case, changes to WebSocket applications happen much less frequently
+than other applications; by using a separate ingress controller, we avoid
+reloading the configuration for the WebSocket ingress whenever there are
+changes (or scaling events/restarts) to other applications.</p><p>Separating the deployment also gave us the ability to use a different ingress
+configuration that&rsquo;s more suited to long-running connections.</p><h4 id=fine-tune-pod-autoscalers>Fine-Tune Pod Autoscalers</h4><p>Since NGINX ingress uses pod IPs as upstream servers, every time the list of
+endpoints for a given <code>Service</code> changes, the ingress configuration must be
+regenerated and reloaded. Thus, if you are observing frequent autoscaling events
+for your applications during normal load, it might be a sign that your
+<code>HorizontalPodAutoscalers</code> need adjustment.</p><figure><img src=/images/production-ingress/hpa.png alt="Grafana dashboard showing the Kubernetes autoscaler in action."><figcaption><p>HPA in action during peak hours.</p></figcaption></figure><p>Another thing that most people don&rsquo;t realize is that the horizontal pod
+autoscaler have a back-off timer that prevents the same target to be
+scaled several times in a short period.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-text data-lang=text>Name:                                                   &lt;app&gt;
+Namespace:                                              production
+Labels:                                                 &lt;none&gt;
+Annotations:                                            &lt;none&gt;
+CreationTimestamp:                                      Fri, 23 Jun 2017 11:41:59 -0300
+Reference:                                              Deployment/&lt;app&gt;
+Metrics:                                                ( current / target )
+  resource cpu on pods  (as a percentage of request):   46% (369m) / 60%
+Min replicas:                                           8
+Max replicas:                                           20
+Conditions:
+  Type                  Status  Reason                  Message
+  ----                  ------  ------                  -------
+  AbleToScale           False   BackoffBoth             the time since the previous scale is still within both the downscale and upscale forbidden windows
+  ScalingActive         True    ValidMetricFound        the HPA was able to succesfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited        True    TooFewReplicas          the desired replica count was less than the minimum replica count
+Events:
+  FirstSeen     LastSeen        Count   From                            SubObjectPath   Type            Reason                  Message
+  ---------     --------        -----   ----                            -------------   --------        ------                  -------
+  14d           10m             39      horizontal-pod-autoscaler                       Normal          SuccessfulRescale       New size: 10; reason: cpu resource utilization (percentage of request) above target
+  14d           3m              69      horizontal-pod-autoscaler                       Normal          SuccessfulRescale       New size: 8; reason: All metrics below target
+</code></pre></td></tr></table></div></div><p>According to the default value for the <code>--horizontal-pod-autoscaler-upscale-delay</code>
+flag in
+<a href=https://kubernetes.io/docs/admin/kube-controller-manager/>kube-controller-manager</a>,
+if your application scaled up, it won&rsquo;t be able to scale up again for 3 minutes.</p><p>Thus, in case your application <strong>really</strong> experiences an increased load, it
+might take ~4 minutes (3m from the autoscaler back-off + ~1m from the metrics
+sync) for the autoscaler to react to the increased load, which might be just
+enough time for your service to degrade.</p><h2 id=references>References</h2><ul><li><a href=https://www.nginx.com/blog/tuning-nginx/>Tuning NGINX for Performance</a></li><li><a href=http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html>How TCP backlog works in Linux</a></li><li><a href=https://eklitzke.org/how-tcp-sockets-work>How TCP Sockets Work</a></li><li><a href=https://johnleach.co.uk/words/372/netfilter-conntrack-memory-usage>Netfilter Conntrack Memory Usage</a></li><li><a href=https://blogs.dropbox.com/tech/2017/09/optimizing-web-servers-for-high-throughput-and-low-latency/>Optimizing web servers for high throuhgput and low latency</a></li><li><a href=https://sysdig.com/blog/container-isolation-gone-wrong/>Container isolation gone wrong</a></li></ul></div></div><div class=container><nav class="flex container suggested"><a rel=prev href=/post/five-months-of-kubernetes/ title="Previous post (older)"><span>Previous</span>
+Five Months of Kubernetes</a></nav></div></main></main><footer class="footer flex"><section class=container><nav class=footer-links><a href=/daniel_martins.asc>PGP</a>
+<a href=/index.xml>RSS</a></nav></section><script async src=/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js></script></footer></body></html>

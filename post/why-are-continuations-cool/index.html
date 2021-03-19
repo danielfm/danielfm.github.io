@@ -1,0 +1,313 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=theme-color content="dark"><title>Why Are Continuations So Darn Cool? | Daniel Martins</title><link rel=stylesheet href=/sass/main.min.4e90cee935c47394b47f9cb7ffe8e3ffab18b88d82fea203918cc3f92eec5eb2.css></head><body class=dark><nav class=navbar><div class=container><div class=flex><div><a class=brand href=/><span class=emoji>👨‍💻</span>
+Daniel Martins</a></div><div class=flex><a href=/>Blog</a>
+<a href=/about/>About</a>
+<button id=dark-mode-button></button></div></div></div></nav><main><div class=container><article><header class=article-header><div class=thumb><div><h1>Why Are Continuations So Darn Cool?</h1><div class=post-meta><div>By Daniel Martins on <time>June 05, 2014</time></div><div class=tags><a href=/tags/functional-programming/>functional programming</a>
+<a href=/tags/scheme/>scheme</a>
+<a href=/tags/racket/>racket</a>
+<a href=/tags/continuations/>continuations</a></div></div></div></div></header></article><div class=article-post><blockquote><p>Continuations are the least understood of all control-flow constructs. This
+lack of understanding (or awareness) is unfortunate, given that continuations
+permit the programmer to implement powerful language features and algorithms.</p><p>&ndash; Matt Might, in <a href=http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/>Continuations By Example</a></p></blockquote><p>The usual way to control the flow of execution of a computer program is via
+procedure calls and returns; a <a href=http://en.wikipedia.org/wiki/Call_stack>stack</a>
+data structure is how high-level programming languages keep track of the point
+to which each active subroutine should return control when it finishes
+executing.</p><p>Unfortunately, you&rsquo;ll need more than that if you intend to write useful
+programs to solve real-world problems. That&rsquo;s why most high-level programming
+languages also provide other control-flow primitives, like the <code>goto</code>
+statement, loops, and exception handling.</p><p>I&rsquo;m not saying that implementing a programming language is an easy task, but
+putting that aside for a moment, it&rsquo;s like programming languages in general
+fight as hard as they can to make the call stack something as hidden and
+intangible as possible - something no one but itself are allowed to control.</p><p>What would happen if some programming languages, instead of keeping the call
+stack inside a 2" solid steel safe, actually gave the programmers the ability
+to &ldquo;capture&rdquo; them as functions that can be invoked, stored, and passed around
+as values?</p><p>In this post, I hope to show you what <em>continuations</em> are and how they can be
+used in practical situations. So grab <a href=http://racket-lang.org>Racket</a> and
+let&rsquo;s go!</p><p><strong>Update (Jun 20, 2014):</strong> I&rsquo;ve changed some things in this post in response
+to some great comments in this
+<a href=http://www.reddit.com/r/scheme/comments/27gn0j/why_are_continuations_so_darn_cool/>Reddit discussion</a> and this
+<a href=http://jecxjo.motd.org/code/blosxom.cgi/coding/explain_continuations>blog post</a>
+by jecxjo.</p><h2 id=first-example>First Example</h2><p><strong>Note:</strong> The following problem is solvable without continuations, but I&rsquo;d like
+to start with something simple enough.</p><p>Suppose you are writing code that interfaces with some API over HTTP. Also
+suppose this API requires a <code>SessionId</code> header to be sent over with the request
+in order to avoid
+<a href=http://en.wikipedia.org/wiki/Cross-site_request_forgery>CSRF</a> attacks.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-scheme data-lang=scheme><span class=o>#</span><span class=nv>lang</span> <span class=nv>racket/base</span>
+
+<span class=c1>;; Object to keep the session-id across requests</span>
+<span class=p>(</span><span class=nf>struct</span> <span class=nv>session</span> <span class=p>[</span><span class=nv>id</span> <span class=o>#</span><span class=nv>:mutable</span><span class=p>])</span>
+
+<span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>perform-request!</span> <span class=nv>session</span> <span class=nv>method</span> <span class=nv>params</span><span class=p>)</span>
+
+  <span class=c1>;; Performs the request</span>
+  <span class=p>(</span><span class=k>define </span><span class=nv>headers</span>  <span class=p>(</span><span class=nf>session-id-headers</span> <span class=nv>session</span><span class=p>))</span>
+  <span class=p>(</span><span class=k>define </span><span class=nv>response</span> <span class=p>(</span><span class=nf>http-request</span> <span class=nv>API-URL</span> <span class=nv>headers</span> <span class=nv>method</span> <span class=nv>params</span><span class=p>))</span>
+
+  <span class=c1>;; Retries the request with the given Session-Id</span>
+  <span class=c1>;; if necessary</span>
+  <span class=p>(</span><span class=nf>when</span> <span class=p>(</span><span class=nf>request-denied?</span> <span class=nv>response</span><span class=p>)</span>
+    <span class=p>(</span><span class=nf>update-session-id!</span> <span class=nv>session</span> <span class=nv>response</span><span class=p>)</span>
+    <span class=p>(</span><span class=nf>perform-request!</span> <span class=nv>session</span> <span class=nv>method</span> <span class=nv>params</span><span class=p>))</span>
+
+  <span class=p>(</span><span class=nf>parse-json</span> <span class=nv>response</span><span class=p>))</span>
+</code></pre></td></tr></table></div></div><p>When the first request is sent - without the <code>SessionId</code> header - the server
+responds with an error, i.e. HTTP 409, in which case the procedure updates
+<code>session</code> with the session id given by the server and retries the request.</p><p>The code makes sense, but it&rsquo;s <strong>broken.</strong></p><p>The recursive call is not made in tail position. So, when it happens,
+another stack frame is pushed to the call stack and even though the retried
+request succeeds, what gets returned to the caller is the response to that
+first unauthorized request.</p><p>If only we had the chance to <strong>return</strong> that second response right to the caller
+instead of having the stack to unwind itself&mldr;</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-scheme data-lang=scheme><span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>perform-request!</span> <span class=nv>session</span> <span class=nv>method</span> <span class=nv>params</span><span class=p>)</span>
+  <span class=c1>;; ...</span>
+
+  <span class=p>(</span><span class=nf>when</span> <span class=p>(</span><span class=nf>request-denied?</span> <span class=nv>response</span><span class=p>)</span>
+    <span class=p>(</span><span class=nf>update-session-id!</span> <span class=nv>session</span> <span class=nv>response</span><span class=p>)</span>
+
+    <span class=c1>;; Something like this</span>
+    <span class=p>(</span><span class=nf>return</span> <span class=p>(</span><span class=nf>perform-request!</span> <span class=o>...</span><span class=p>)))</span>
+
+  <span class=p>(</span><span class=nf>parse-json</span> <span class=nv>response</span><span class=p>))</span>
+</code></pre></td></tr></table></div></div><h3 id=enter-callcc>Enter <code>call/cc</code></h3><p>A continuation can be viewed as the evaluation context surrounding an
+expression or, in other words, a <strong>snapshot</strong> of the current control state
+of the program.</p><p>Here&rsquo;s an example:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-scheme data-lang=scheme><span class=o>#</span><span class=nv>lang</span> <span class=nv>racket/base</span>
+
+<span class=c1>;; We&#39;ll keep the captured continuation here</span>
+<span class=p>(</span><span class=k>define </span><span class=nv>cc</span> <span class=no>#f</span><span class=p>)</span>
+
+<span class=c1>;; This function returns the value 3 *and* stores the</span>
+<span class=c1>;; continuation that represents the execution context</span>
+<span class=c1>;; in which this function was called</span>
+<span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>val!</span><span class=p>)</span>
+  <span class=p>(</span><span class=nf>call/cc</span>
+   <span class=p>(</span><span class=k>lambda </span><span class=p>(</span><span class=nf>k</span><span class=p>)</span>
+     <span class=p>(</span><span class=k>set! </span><span class=nv>cc</span> <span class=nv>k</span><span class=p>)</span>
+     <span class=mi>3</span><span class=p>)))</span>
+
+<span class=c1>;; Stored continuation for this expression: (+ 1 (* 2 ?))</span>
+<span class=p>(</span><span class=nb>+ </span><span class=mi>1</span> <span class=p>(</span><span class=nb>* </span><span class=mi>2</span> <span class=p>(</span><span class=nf>val!</span><span class=p>)))</span> <span class=c1>;-&gt; 7</span>
+
+<span class=c1>;; Replays the continuation with different arguments</span>
+<span class=p>(</span><span class=nf>cc</span> <span class=mi>2</span><span class=p>)</span> <span class=c1>;-&gt;  5, or (+ 1 (* 2 2))</span>
+<span class=p>(</span><span class=nf>cc</span> <span class=mi>6</span><span class=p>)</span> <span class=c1>;-&gt; 13, or (+ 1 (* 2 6))</span>
+</code></pre></td></tr></table></div></div><p>It turns out that, if we rename <code>k</code> to <code>return</code>, this is exactly the thing
+we need in order to fix that broken API client example:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-scheme data-lang=scheme><span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>perform-request!</span> <span class=nv>session</span> <span class=nv>method</span> <span class=nv>params</span><span class=p>)</span>
+  <span class=p>(</span><span class=nf>let/cc</span> <span class=nv>return</span> <span class=c1>; same as (call/cc (lambda (return) body...))</span>
+    <span class=c1>;; ...</span>
+
+    <span class=c1>;; Retries the request and gives the control</span>
+    <span class=c1>;; back to the caller if request-denied?</span>
+    <span class=p>(</span><span class=nf>when</span> <span class=p>(</span><span class=nf>request-denied?</span> <span class=nv>response</span><span class=p>)</span>
+      <span class=p>(</span><span class=nf>update-session-id!</span> <span class=nv>session</span> <span class=nv>response</span><span class=p>)</span>
+      <span class=p>(</span><span class=nf>return</span> <span class=p>(</span><span class=nf>perform-request!</span> <span class=nv>session</span> <span class=nv>method</span> <span class=nv>params</span><span class=p>)))</span>
+
+    <span class=p>(</span><span class=nf>parse-json</span> <span class=nv>response</span><span class=p>)))</span>
+</code></pre></td></tr></table></div></div><p>Now the function captures the current continuation at the moment the procedure
+<code>perform-request!</code> is first called. Then, if the server denies a request, we
+re-send the request with the given <code>SessionId</code> and use that grabbed continuation
+to transfer the control back to the caller.</p><p>Nice, don&rsquo;t you think? It&rsquo;s like we&rsquo;re freezing time at <code>let/cc</code>, doing some
+stuff, and then resuming from there.</p><p>This is a common use case of continuations. Check out
+<a href=https://github.com/danielfm/transmission-rpc-client>this project</a> if you want
+to read the code that inspired this example.</p><h2 id=generators>Generators</h2><p><a href=http://en.wikipedia.org/wiki/Generator_(computer_programming)>Generators</a> can
+be viewed as special routines that behave like iterators. If you are familiar
+with Python, you&rsquo;ve probably seen code like this one:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>iterate</span><span class=p>(</span><span class=nb>list</span><span class=p>):</span>
+  <span class=s2>&#34;Generator function that iterates through list.&#34;</span>
+  <span class=k>for</span> <span class=n>item</span> <span class=ow>in</span> <span class=nb>list</span><span class=p>:</span>
+    <span class=k>yield</span> <span class=n>item</span>
+
+<span class=c1># Usage</span>
+<span class=n>it</span> <span class=o>=</span> <span class=n>iterate</span><span class=p>(</span><span class=nb>range</span><span class=p>(</span><span class=mi>2</span><span class=p>))</span>
+
+<span class=n>it</span><span class=o>.</span><span class=n>next</span><span class=p>()</span> <span class=c1># -&gt; 0</span>
+<span class=n>it</span><span class=o>.</span><span class=n>next</span><span class=p>()</span> <span class=c1># -&gt; 1</span>
+<span class=n>it</span><span class=o>.</span><span class=n>next</span><span class=p>()</span> <span class=c1># -&gt; raises StopIteration error</span>
+</code></pre></td></tr></table></div></div><p>Do you see any resemblance between this example and the previous one? Although
+Python doesn&rsquo;t provide a <code>call/cc</code>-like facility in the language, one can argue
+that its generators are like a poor man&rsquo;s continuation.</p><p>Let&rsquo;s pretend for a moment that Racket didn&rsquo;t have a
+<a href=http://docs.racket-lang.org/reference/Generators.html>generator library</a>
+that does exactly this. How could this be implemented Racket using
+continuations?</p><p>What we need is a function that returns another function which, when called,
+yields one item at a time, until the list is exhausted.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-scheme data-lang=scheme><span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>iterate</span> <span class=nv>lst</span><span class=p>)</span>
+  <span class=p>(</span><span class=k>lambda </span><span class=p>()</span>
+    <span class=p>(</span><span class=nf>let/cc</span> <span class=nv>return</span>
+      <span class=p>(</span><span class=nf>for-each</span>
+       <span class=p>(</span><span class=k>lambda </span><span class=p>(</span><span class=nf>item</span><span class=p>)</span>
+         <span class=p>(</span><span class=nf>return</span> <span class=nv>item</span><span class=p>))</span>
+       <span class=nv>lst</span><span class=p>))))</span>
+
+<span class=c1>;; Usage</span>
+<span class=p>(</span><span class=k>define </span><span class=nv>next</span> <span class=p>(</span><span class=nf>iterate</span> <span class=p>(</span><span class=nf>range</span> <span class=mi>3</span><span class=p>)))</span>
+<span class=p>(</span><span class=nf>next</span><span class=p>)</span> <span class=c1>;-&gt; 0</span>
+<span class=p>(</span><span class=nf>next</span><span class=p>)</span> <span class=c1>;-&gt; 0</span>
+</code></pre></td></tr></table></div></div><p>This code follows the same pattern as the previous ones, but it doesn&rsquo;t seem
+to work the way you might expect. The reason should be clear though: <code>iterate</code>
+returns a lambda that uses the captured continuation to yield the list&rsquo;s first
+item.</p><p>To make this code work, we need to capture the current continuation from the
+inside of <code>for-each</code> and store it so it can be used to resume the computation
+when <code>next</code> is called again.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-scheme data-lang=scheme><span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>iterate</span> <span class=nv>lst</span><span class=p>)</span>
+
+  <span class=c1>;; Defines `state` as being a function that starts the</span>
+  <span class=c1>;; iteration via `for-each`</span>
+  <span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>state</span> <span class=nv>return</span><span class=p>)</span>
+    <span class=p>(</span><span class=nf>for-each</span>
+     <span class=p>(</span><span class=k>lambda </span><span class=p>(</span><span class=nf>item</span><span class=p>)</span>
+
+       <span class=c1>;; Here, we capture the continuation that represents the</span>
+       <span class=c1>;; current state of the iteration</span>
+       <span class=p>(</span><span class=nf>let/cc</span> <span class=nv>item-cc</span>
+
+         <span class=c1>;; Before the item is yielded, we update `state` to</span>
+         <span class=c1>;; `item-cc` so the computation is resumed the next</span>
+         <span class=c1>;; time the generator is called</span>
+         <span class=p>(</span><span class=k>set! </span><span class=nv>state</span> <span class=nv>item-cc</span><span class=p>)</span>
+
+         <span class=c1>;; Yields the current item to the caller</span>
+         <span class=p>(</span><span class=nf>return</span> <span class=nv>item</span><span class=p>)))</span>
+     <span class=nv>lst</span><span class=p>)</span>
+
+    <span class=c1>;; Yields &#39;done when the list is exhausted</span>
+    <span class=p>(</span><span class=nf>return</span> <span class=ss>&#39;done</span><span class=p>))</span>
+
+  <span class=c1>;; Returns a function that calls the stored `state` with the</span>
+  <span class=c1>;; current continuation so we can yield one item at a time</span>
+  <span class=p>(</span><span class=k>define </span><span class=p>(</span><span class=nf>generator</span><span class=p>)</span>
+    <span class=p>(</span><span class=nb>call/cc </span><span class=nv>state</span><span class=p>))</span>
+  <span class=nv>generator</span><span class=p>)</span>
+
+<span class=c1>;; Usage</span>
+<span class=p>(</span><span class=k>define </span><span class=nv>next</span> <span class=p>(</span><span class=nf>iterate</span> <span class=o>&#39;</span><span class=p>(</span><span class=mi>0</span> <span class=mi>1</span><span class=p>)))</span>
+
+<span class=p>(</span><span class=nf>next</span><span class=p>)</span> <span class=c1>;-&gt; 0</span>
+<span class=p>(</span><span class=nf>next</span><span class=p>)</span> <span class=c1>;-&gt; 1</span>
+<span class=p>(</span><span class=nf>next</span><span class=p>)</span> <span class=c1>;-&gt; &#39;done</span>
+</code></pre></td></tr></table></div></div><p>If you are having trouble understanding how this code works, the following
+diagram might help.</p><p><img src=/images/continuations/generator.svg alt=Diagram></p><h2 id=other-examples>Other Examples</h2><p>Moving along to more high level stuff, in
+<a href=http://docs.racket-lang.org/more/index.html>this example</a> Matthew Flatt
+explains how to build a continuation-based web server in Racket. Still in the
+realm of continuation-based-web-something, if you are into Smalltalk, don&rsquo;t
+forget to check <a href=http://www.seaside.st/>Seaside</a>, a web application framework
+that uses continuations to model multiple independent flows between different
+components.</p><p>If you don&rsquo;t code Scheme or Smalltalk for a living, don&rsquo;t worry. The chances
+are your language does support some flavor of continuations, either natively or
+via some third-party library.</p><h2 id=conclusion>Conclusion</h2><p>It seems that continuations can be used to implement a wide variety of advanced
+control constructs including non-local exits, exception handling, backtracking,
+and <a href=http://en.wikipedia.org/wiki/Coroutine>coroutines</a>.</p><p>In this post, I hope to have clarified some of the key aspects about
+continuations. If you have any suggestion on how to improve this text, please
+let me know.</p></div></div><div class=container><nav class="flex container suggested"><a rel=prev href=/post/functional-programming-101-with-clojure/ title="Previous post (older)"><span>Previous</span>
+Functional Programming 101 - With Clojure</a>
+<a rel=next href=/post/a-week-of-docker/ title="Next post (newer)"><span>Next</span>
+A Week Of Docker</a></nav></div></main></main><footer class="footer flex"><section class=container><nav class=footer-links><a href=/daniel_martins.asc>PGP</a>
+<a href=/index.xml>RSS</a></nav></section><script async src=/js/features.min.c5d8f3350f5a652f526b982306299353824299adb7a3bd261ecffacc47087f66.js></script></footer></body></html>
