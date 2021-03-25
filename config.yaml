@@ -25,8 +25,12 @@ menu:
   - name: Blog
     url: /
     weight: 1
+  - name: My Setup
+    url: /my-setup/
+    weight: 2
   - name: About
     url: /about/
+    weight: 3
   footer:
   - name: PGP
     url: /daniel_martins.asc

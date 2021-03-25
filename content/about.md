@@ -8,7 +8,7 @@ aliases:
 ---
 
 My name is **Daniel Martins** and I'm a senior software engineer currently
-working as a SRE at
+working as a Site Reliability Engineer at
 [Jusbrasil](https://www.jusbrasil.com.br), one of the fastest growing LawTech
 startups in Brazil.
 
