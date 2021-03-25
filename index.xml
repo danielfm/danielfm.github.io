@@ -1,6 +1,119 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Daniel Martins</title><link>https://danielfm.me/</link><description>Recent content on Daniel Martins</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 22 Feb 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://danielfm.me/" rel="self" type="application/rss+xml"/><item><title>Articles</title><link>https://danielfm.me/articles/</link><pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate><guid>https://danielfm.me/articles/</guid><description/></item><item><title>Projects</title><link>https://danielfm.me/projects/</link><pubDate>Sat, 22 Feb 2020 00:00:00 +0000</pubDate><guid>https://danielfm.me/projects/</guid><description/></item><item><title>Posts</title><link>https://danielfm.me/post/</link><pubDate>Wed, 13 Sep 2017 00:00:00 +0000</pubDate><guid>https://danielfm.me/post/</guid><description/></item><item><title>About</title><link>https://danielfm.me/about/</link><pubDate>Sun, 01 Apr 2012 00:00:00 +0000</pubDate><author>Daniel Martins</author><guid>https://danielfm.me/about/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Daniel Martins</title><link>https://danielfm.me/</link><description>Recent content on Daniel Martins</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 22 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://danielfm.me/" rel="self" type="application/rss+xml"/><item><title>My Setup</title><link>https://danielfm.me/my-setup/</link><pubDate>Mon, 22 Mar 2021 00:00:00 +0000</pubDate><author>Daniel Martins</author><guid>https://danielfm.me/my-setup/</guid><description>
+&lt;p>Not that anyone&amp;rsquo;s interested in this, but I thought about sharing more information about my setup and how it&amp;rsquo;s working for me, so here it is.&lt;/p>
+&lt;p>&lt;strong>Note:&lt;/strong> This is a work in progress and things keeps changing all the time, so the information below is most likely outdated.&lt;/p>
+&lt;h3 id="hardware">Hardware&lt;/h3>
+&lt;h4 id="lenovo-thinkpad-t480">Lenovo Thinkpad T480&lt;/h4>
+&lt;p>I use a &lt;a href="https://www.laptopmag.com/reviews/laptops/lenovo-thinkpad-t480">Thinkpad T480&lt;/a> running Arch Linux as my daily driver.&lt;/p>
+&lt;p>My current installation has a little more focus on security and privacy than previous iterations, so I spent a little more time setting up Secure Boot with my own keys, &lt;a href="https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#LVM_on_LUKS">LVM on LUKS&lt;/a> for full disk encryption, two-factor authentication during login with pamu2f + &lt;a href="https://www.yubico.com/">YubiKey&lt;/a> (I also have a &lt;a href="https://www.ledger.com/">Ledger Nano S&lt;/a> as a backup) and &lt;code>ufw&lt;/code> firewall configuration that denies all traffic except for the ones I explicitly want. I also try to keep a VPN running at all times, but I&amp;rsquo;m still evolving this bit.&lt;/p>
+&lt;p>I keep the &lt;a href="https://github.com/danielfm/archlinux-workstation">machine configuration with Ansible&lt;/a>, which was particularly useful when I had two laptops (the other one was an old Dell which is now in use by my partner after her laptop went dead) that I wanted to run with the same configuration.&lt;/p>
+&lt;h5 id="things-to-improve">Things to improve&lt;/h5>
+&lt;p>I want to migrate to the &lt;a href="https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#Btrfs_subvolumes_with_swap">Btrfs&lt;/a>, which has native support for snapshots. This is a nice feature to have in order to protect against upgrade issues.&lt;/p>
+&lt;p>In one occasion, I interrupted the upgrade process by mistake, which caused the kernel images from not being generated, and the system stopped booting. Luckily I had taken a snapshot with &lt;a href="https://github.com/teejee2008/timeshift">Timeshift&lt;/a> prior to upgrading, and I was able to restore the snapshot, but the process of taking and restoring snapshots is much easier and faster in Btrfs. I could even take snapshots automatically before applying system updates.&lt;/p>
+&lt;p>Going slightly off-topic, I would also like to experiment with VPN router devices in order to make VPN usage simpler and more pervasive in my household.&lt;/p>
+&lt;h4 id="monitors">Monitors&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Model&lt;/th>
+&lt;th style="text-align:center">Size&lt;/th>
+&lt;th>Resolution&lt;/th>
+&lt;th>Refresh rate&lt;/th>
+&lt;th>Position&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>LG Ultrawide 29WK500/50S&lt;/td>
+&lt;td style="text-align:center">29&amp;quot;&lt;/td>
+&lt;td>2560x1080&lt;/td>
+&lt;td>60Hz&lt;/td>
+&lt;td>Landscape&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Dell U2412M&lt;/td>
+&lt;td style="text-align:center">24&amp;quot;&lt;/td>
+&lt;td>1920x1200&lt;/td>
+&lt;td>60Hz&lt;/td>
+&lt;td>Portrait&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>It&amp;rsquo;s impossible for me to work with just the laptop built-in display.&lt;/p>
+&lt;p>I like to use the display in portrait position for reading articles and the other one for splitting between text editor, web browsers and terminal windows, all that arranged in different workspaces. I use a &lt;a href="https://i3wm.org/">i3wm&lt;/a>, a tiling window manager for simplifying the task of navigating between the different windows in different workspaces and displays with the keyboard.&lt;/p>
+&lt;h5 id="things-to-improve-1">Things to improve&lt;/h5>
+&lt;p>This LG is crap. At least I got it cheap. The plastic cover is fragile and the matte surface scratches easily. Also, I currently have an issue where the monitor turns off right after turning it on, especially after using the monitor for several hours straight. The problem goes away after disconnecting the display from the power supply for a few hours. It&amp;rsquo;s really annoying.&lt;/p>
+&lt;p>The Dell display is very good, but it&amp;rsquo;s starting to age.&lt;/p>
+&lt;p>Someday I&amp;rsquo;ll buy myself a couple of 4k displays and perhaps some adjustable monitor arms.&lt;/p>
+&lt;h4 id="ergodox-ez-keyboard">ErgoDox EZ Keyboard&lt;/h4>
+&lt;p>A few years back, I used a Macbook Pro as my work computer. I was one of the many users that were affected by the terrible build quality of the built-in &amp;ldquo;butterfly&amp;rdquo; keyboard, so I began considering using an external keyboard.&lt;/p>
+&lt;p>Regarding the ergonomics, one issue I had was occasional shoulder and wrist pain, which was most likely caused by the effort I had to make to keep my fingers lined up with the key rows while touch typing. Also, as an old &lt;a href="https://www.gnu.org/software/emacs/">Emacs&lt;/a> user, other common cause of pain was the infamous &lt;a href="https://ergoemacs.org/emacs/emacs_pinky.html">Emacs pinky&lt;/a>. I tried to do the usual change of mapping the &lt;code>Caps Lock&lt;/code> key to &lt;code>Ctrl&lt;/code>, to make the key easier to reach, but that only helped so much.&lt;/p>
+&lt;p>After some research, I decided to purchase myself a programmable split keyboard, and the one I chose was the &lt;a href="https://ergodox-ez.com/">ErgoDox EZ&lt;/a>.&lt;/p>
+&lt;p>With ErgoDox EZ, I managed to move the &lt;code>Ctrl&lt;/code> key to my thumbs, causing much less strain on my pinkies. I also heavily changed the default layout to fit my needs. To do that, I used &lt;a href="https://whatpulse.org/">WhatPulse&lt;/a> for a while, in order to identify the most pressed keys and gradually changing the keyboard layout towards better ergonomics for my usage. Now I can type for hours straight without busting my arms and hands.&lt;/p>
+&lt;p>The keyboard is built like a tank. It will probably outlive every other piece of hardware I have, so the high price tag is definitely worth it!&lt;/p>
+&lt;h5 id="things-to-improve-2">Things to improve&lt;/h5>
+&lt;p>Nothing so far.&lt;/p>
+&lt;h4 id="kensington-orbit-trackball">Kensington Orbit Trackball&lt;/h4>
+&lt;p>By using an external keyboard, I had to start using an external pointing device. I used an old Microsoft mouse for a while before getting myself a &lt;a href="https://www.kensington.com/p/products/electronic-control-solutions/trackball-products/orbit-trackball-with-scroll-ring/">Kensington Orbit&lt;/a> trackball.&lt;/p>
+&lt;p>At first, I considered buying myself a Magic Trackpad 2 but one of these is way too expensive here in Brazil. In the end I decided to try a trackball, which is something I was curious about and wanted to try for quite some time.&lt;/p>
+&lt;p>This was a nice ergonomics improvement, as I don&amp;rsquo;t have to move my arm around in order to move the pointer. It took me a few weeks to regain the same precision I had when using a traditional mouse or trackpad device, but I feel much more comfortable now.&lt;/p>
+&lt;h5 id="things-to-improve-3">Things to improve&lt;/h5>
+&lt;p>The Orbit build quality is also very good. The only downside for me was the scroll ring rubber cover, which sometimes gets in the way when spinning the scroll ring and builds up grease and dirt. I eventually removed the rubber, as you can see in the picture below.&lt;/p>
+&lt;figure>
+&lt;img src="https://danielfm.me/images/my-setup/keyboard-trackpad.jpg"
+alt="ErgoDox EZ and Kensington Orbit trackpad"/> &lt;figcaption>
+&lt;p>The power duo.&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>If a nice trackpad wasn&amp;rsquo;t so damn expensive around here, I would give that a try.&lt;/p>
+&lt;h4 id="xiaomi-mi-a2-android-phone">Xiaomi Mi A2 Android Phone&lt;/h4>
+&lt;p>After playing around with custom Android ROMs for a while in my old Samsung J7, I decided I wanted to try a more security and privacy oriented ROM, and &lt;a href="https://calyxos.org/">CalyxOS&lt;/a> caught my attention.&lt;/p>
+&lt;p>It&amp;rsquo;s supposed to offer similar security features as &lt;a href="https://grapheneos.org/">GrapheneOS&lt;/a>, at least for my threat model, but without compromising usability, so I would still be able to use apps for banking, food delivery, and others that require Google Services to work.&lt;/p>
+&lt;p>Since I was short on money, I decided to buy myself a Xiaomi Mi A2, which is the only budget phone supported by CalyxOS.&lt;/p>
+&lt;p>CalyxOS is very stable, and the fact it&amp;rsquo;s not running Google bloatware makes the battery last longer, which is a plus in a device with more limited battery capacity like this.&lt;/p>
+&lt;h5 id="things-to-improve-4">Things to improve&lt;/h5>
+&lt;p>I thought the lack of NFC and a headphone jack wouldn&amp;rsquo;t be too much trouble, but I kind of regret that decision.&lt;/p>
+&lt;p>My next phone will be a second-hand Pixel, or whatever device CalyxOS will happen to support in the future.&lt;/p>
+&lt;h4 id="yubikey-5-nfc-and-ledger-nano-s">YubiKey 5 NFC and Ledger Nano S&lt;/h4>
+&lt;p>I use &lt;a href="https://www.yubico.com/">YubiKey&lt;/a> as my main hardware token, and keep the Ledger Nano in a safe place as a backup. I might buy myself another YubiKey in the future and keep the Ledger only for handling cryptocurrencies.&lt;/p>
+&lt;p>The YubiKey build quality is great. The performance is decent (much faster than in Leger Nano S), and I feel much safer using these devices than I felt when I had to rely on other methods for multi-factor verification. I also no longer have to keep private SSH and PGP keys available in my computer&amp;rsquo;s file system, and the U2F / WebAuthn support is great.&lt;/p>
+&lt;p>The PGP support in the Series 5 key is nice and enables me to use these devices for a lot of different things, such as authenticating to remote machines, signing/encrypting messages, managing passwords, etc.&lt;/p>
+&lt;p>Aside from the obvious usage scenarios, I also use the hardware tokens in my local machine as a second factor and for authenticating &lt;code>sudo&lt;/code>.&lt;/p>
+&lt;h5 id="things-to-improve-5">Things to improve&lt;/h5>
+&lt;p>The only thing I wish is for more services to properly support hardware tokens and standards like WebAuthn. There are still a lot of sensitive services that still rely on TOTP as second factor (like ProtonMail) and this drives me crazy.&lt;/p>
+&lt;h3 id="software">Software&lt;/h3>
+&lt;h4 id="desktop">Desktop&lt;/h4>
+&lt;p>I use &lt;a href="https://i3wm.org/">i3wm&lt;/a> as the window manager, which helps me spread editors, terminals, browsers and other apps across the different displays and navigate between them quickly without leaving the keyboard.&lt;/p>
+&lt;p>More details on how my desktop is configured can be found in &lt;a href="https://github.com/danielfm/archlinux-workstation">this Ansible configuration&lt;/a>.&lt;/p>
+&lt;figure>
+&lt;img src="https://github.com/danielfm/archlinux-workstation/raw/master/screenshot.png"
+alt="My i3wm configuration with some windows"/> &lt;figcaption>
+&lt;p>Desktop screenshot, possibly outdated.&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h5 id="things-to-improve-6">Things to improve&lt;/h5>
+&lt;p>Nothing in particular, but I keep trying small changes to my workflow to see how that affects my productivity.&lt;/p>
+&lt;h4 id="calyxos">CalyxOS&lt;/h4>
+&lt;p>I use the same device both for work and my personal life. In order to separate the two, I use the &lt;a href="https://f-droid.org/en/packages/net.typeblog.shelter/">Shelter app&lt;/a> for cloning apps into the work profile and install other apps required for my work from there, such as Slack, &lt;a href="https://bitwarden.com">Bitwarden&lt;/a> and a VPN service.&lt;/p>
+&lt;p>I also try to keep privacy-invasive apps in the work profile as well, as this is kept disabled most of the time. The work profile is also configured with always-on VPN to ensure all work related traffic flows through an encrypted tunnel. The VPN service I use also supports a kill switch, so that no traffic is allowed unless the VPN is up and running.&lt;/p>
+&lt;p>I don&amp;rsquo;t keep a Google account signed in this device for extended periods of time. I think I only logged in once so I could restore the Whatsapp backup after switching phones, but logged out right after. For things like push notifications and location services, microg works well enough.&lt;/p>
+&lt;p>My personal profile also have an always-on VPN with a kill switch enabled.&lt;/p>
+&lt;p>Some of the apps I use regularly: &lt;a href="https://f-droid.org/en/packages/de.danoeh.antennapod/">AntennaPod&lt;/a>, Bromite, &lt;a href="https://f-droid.org/en/packages/at.bitfire.davdroid/">DAVx5&lt;/a>, &lt;a href="https://f-droid.org/en/packages/im.vector.app/">Element&lt;/a>, &lt;a href="https://f-droid.org/en/packages/ml.docilealligator.infinityforreddit/">Infinity&lt;/a>, &lt;a href="https://f-droid.org/en/packages/org.schabi.newpipe/">NewPipe&lt;/a>, &lt;a href="https://f-droid.org/en/packages/com.nextcloud.client/">NextCloud&lt;/a>, &lt;a href="https://f-droid.org/en/packages/org.dmfs.tasks/">OpenTasks&lt;/a>, &lt;a href="https://f-droid.org/en/packages/com.orgzly/">Orgzly&lt;/a>, &lt;a href="https://f-droid.org/en/packages/dev.msfjarvis.aps/">Password Store&lt;/a>, Signal, &lt;a href="https://f-droid.org/en/packages/com.yubico.yubioath/">Yubico Authenticator&lt;/a>.&lt;/p>
+&lt;h5 id="things-to-improve-7">Things to improve&lt;/h5>
+&lt;p>Nothing. All apps I need work 100% in CalyxOS. I don&amp;rsquo;t have to give up anything in order to have some privacy.&lt;/p>
+&lt;p>Actually, I only had to give up using Android Auto in my car console, but it seems CalyxOS team is working to support even that!&lt;/p>
+&lt;h3 id="vpn-services">VPN Services&lt;/h3>
+&lt;h4 id="private-internet-access">Private Internet Access&lt;/h4>
+&lt;p>&lt;a href="https://privateinternetaccess.com">PIA&lt;/a> offers good trade-off between privacy, security and price, at least for my threat model. Before that I used &lt;a href="https://mullvad.net">Mullvad&lt;/a>, which is awesome, but a bit too expensive for someone who doesn&amp;rsquo;t get paid in USD/EUR like me.&lt;/p>
+&lt;h3 id="self-hosted-services">Self-Hosted Services&lt;/h3>
+&lt;h4 id="nextcloud">NextCloud&lt;/h4>
+&lt;p>I started self-hosting &lt;a href="https://nextcloud.com/">NextCloud&lt;/a> as a way to stop relying on a single vendor (Google) for almost all my data.&lt;/p>
+&lt;p>The NextCloud Android app, together with OpenTasks and DAVx5, work well for automatically uploading all pictures and videos I take with my smartphone, as well as syncing task, calendar and contact information on a regular basis. It works so well that I&amp;rsquo;m not afraid of wiping out my smartphone for trying different Android ROMs, which was something I did quite frequently before I tried CalyxOS.&lt;/p>
+&lt;p>In my desktop, the NextCloud app keeps syncing those files to my main computer, so I have at least one copy of all important files. I also run a separate daily backup process via &lt;a href="https://wiki.gnome.org/Apps/DejaDup">DejaDup&lt;/a> that encrypts and uploads all critical data to a S3 bucket via the NextCloud Webdav interface, for redundancy.&lt;/p>
+&lt;h5 id="things-to-improve-8">Things to improve&lt;/h5>
+&lt;p>NextCloud is great, but it&amp;rsquo;s not a perfect replacement for all Google products, such as Photos, but I&amp;rsquo;m willing to make compromises if that makes me less overly dependent on a couple service provider for all my data.&lt;/p>
+&lt;p>I&amp;rsquo;ll maybe try different solutions for photo/video management and sharing, but this is not bothering me so much at the moment.&lt;/p></description></item><item><title>Articles</title><link>https://danielfm.me/articles/</link><pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate><guid>https://danielfm.me/articles/</guid><description/></item><item><title>Projects</title><link>https://danielfm.me/projects/</link><pubDate>Sat, 22 Feb 2020 00:00:00 +0000</pubDate><guid>https://danielfm.me/projects/</guid><description/></item><item><title>Posts</title><link>https://danielfm.me/post/</link><pubDate>Wed, 13 Sep 2017 00:00:00 +0000</pubDate><guid>https://danielfm.me/post/</guid><description/></item><item><title>About</title><link>https://danielfm.me/about/</link><pubDate>Sun, 01 Apr 2012 00:00:00 +0000</pubDate><author>Daniel Martins</author><guid>https://danielfm.me/about/</guid><description>
 &lt;p>My name is &lt;strong>Daniel Martins&lt;/strong> and I&amp;rsquo;m a senior software engineer currently
-working as a SRE at
+working as a Site Reliability Engineer at
 &lt;a href="https://www.jusbrasil.com.br">Jusbrasil&lt;/a>, one of the fastest growing LawTech
 startups in Brazil.&lt;/p>
 &lt;p>I&amp;rsquo;m passionate about open source software, programming languages (specially the
