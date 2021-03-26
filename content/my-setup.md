@@ -15,7 +15,7 @@ Not that anyone's interested in this, but I thought about sharing more informati
 
 I use a [Thinkpad T480](https://www.laptopmag.com/reviews/laptops/lenovo-thinkpad-t480) running Arch Linux as my daily driver.
 
-My current installation has a little more focus on security and privacy than previous iterations, so I spent a little more time setting up Secure Boot with my own keys, [LVM on LUKS](https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#LVM_on_LUKS) for full disk encryption, two-factor authentication during login with pamu2f + [YubiKey](https://www.yubico.com/) (I also have a [Ledger Nano S](https://www.ledger.com/) as a backup) and `ufw` firewall configuration that denies all traffic except for the ones I explicitly want. I also try to keep a VPN running at all times, but I'm still evolving this bit.
+My current installation has a little more focus on security and privacy than previous iterations, so I spent a little more time setting up Secure Boot with my own keys, [LVM on LUKS](https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#LVM_on_LUKS) for full disk encryption, two-factor authentication during login with pamu2f + [YubiKey](https://www.yubico.com/br/product/yubikey-5-nfc/) (I also have a [Ledger Nano S](https://shop.ledger.com/products/ledger-nano-s) as a backup) and `ufw` firewall configuration that denies all traffic except for the ones I explicitly want. I also try to keep a VPN running at all times, but I'm still evolving this bit.
 
 I keep the [machine configuration with Ansible](https://github.com/danielfm/archlinux-workstation), which was particularly useful when I had two laptops (the other one was an old Dell which is now in use by my partner after her laptop went dead) that I wanted to run with the same configuration.
 
@@ -29,10 +29,10 @@ Going slightly off-topic, I would also like to experiment with VPN router device
 
 #### Monitors
 
-| Model                    | Size | Resolution | Refresh rate | Position  |
-|--------------------------|:----:|------------|--------------|-----------|
-| LG Ultrawide 29WK500/50S | 29"  | 2560x1080  | 60Hz         | Landscape |
-| Dell U2412M              | 24"  | 1920x1200  | 60Hz         | Portrait  |
+| Model          | Size | Resolution | Position  |
+|----------------|:----:|------------|-----------|
+| LG 29WK500/50S | 29"  | 2560x1080  | Landscape |
+| Dell U2412M    | 24"  | 1920x1200  | Portrait  |
 
 It's impossible for me to work with just the laptop built-in display.
 
@@ -96,7 +96,7 @@ My next phone will be a second-hand Pixel, or whatever device CalyxOS will happe
 
 #### YubiKey 5 NFC and Ledger Nano S
 
-I use [YubiKey](https://www.yubico.com/) as my main hardware token, and keep the Ledger Nano in a safe place as a backup. I might buy myself another YubiKey in the future and keep the Ledger only for handling cryptocurrencies.
+I use [YubiKey](https://www.yubico.com/br/product/yubikey-5-nfc/) as my main hardware token, and keep the [Ledger Nano S](https://shop.ledger.com/products/ledger-nano-s) in a safe place as a backup. I might buy myself another YubiKey in the future and keep the Ledger only for handling cryptocurrencies.
 
 The YubiKey build quality is great. The performance is decent (much faster than in Leger Nano S), and I feel much safer using these devices than I felt when I had to rely on other methods for multi-factor verification. I also no longer have to keep private SSH and PGP keys available in my computer's file system, and the U2F / WebAuthn support is great.
 
@@ -132,7 +132,7 @@ I don't keep a Google account signed in this device for extended periods of time
 
 My personal profile also have an always-on VPN with a kill switch enabled.
 
-Some of the apps I use regularly: [AntennaPod](https://f-droid.org/en/packages/de.danoeh.antennapod/), Bromite, [DAVx5](https://f-droid.org/en/packages/at.bitfire.davdroid/), [Element](https://f-droid.org/en/packages/im.vector.app/), [Infinity](https://f-droid.org/en/packages/ml.docilealligator.infinityforreddit/), [NewPipe](https://f-droid.org/en/packages/org.schabi.newpipe/), [NextCloud](https://f-droid.org/en/packages/com.nextcloud.client/), [OpenTasks](https://f-droid.org/en/packages/org.dmfs.tasks/), [Orgzly](https://f-droid.org/en/packages/com.orgzly/), [Password Store](https://f-droid.org/en/packages/dev.msfjarvis.aps/), Signal, [Yubico Authenticator](https://f-droid.org/en/packages/com.yubico.yubioath/).
+Some of the apps I use regularly: [AntennaPod](https://f-droid.org/en/packages/de.danoeh.antennapod/), [Bromite](https://www.bromite.org/), [DAVx5](https://f-droid.org/en/packages/at.bitfire.davdroid/), [Element](https://f-droid.org/en/packages/im.vector.app/), [Infinity](https://f-droid.org/en/packages/ml.docilealligator.infinityforreddit/), [NewPipe](https://f-droid.org/en/packages/org.schabi.newpipe/), [NextCloud](https://f-droid.org/en/packages/com.nextcloud.client/), [OpenTasks](https://f-droid.org/en/packages/org.dmfs.tasks/), [Orgzly](https://f-droid.org/en/packages/com.orgzly/), [Password Store](https://f-droid.org/en/packages/dev.msfjarvis.aps/), [Signal](https://signal.org/android/apk/), [Yubico Authenticator](https://f-droid.org/en/packages/com.yubico.yubioath/).
 
 ##### Things to improve
 
