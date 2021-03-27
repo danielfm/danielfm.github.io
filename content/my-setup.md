@@ -38,6 +38,8 @@ It's impossible for me to work with just the laptop built-in display.
 
 I like to use the display in portrait position for reading articles and the other one for splitting between text editor, web browsers and terminal windows, all that arranged in different workspaces. I use a [i3wm](https://i3wm.org/), a tiling window manager for simplifying the task of navigating between the different windows in different workspaces and displays with the keyboard.
 
+{{< figure src="/images/my-setup/desk.jpg" caption="My monitor disposition." alt="Desk with monitors, keyboard and trackball" >}}
+
 ##### Things to improve
 
 This LG is crap. At least I got it cheap. The plastic cover is fragile and the matte surface scratches easily. Also, I currently have an issue where the monitor turns off right after turning it on, especially after using the monitor for several hours straight. The problem goes away after disconnecting the display from the power supply for a few hours. It's really annoying.
