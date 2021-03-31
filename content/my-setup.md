@@ -156,10 +156,10 @@ I started self-hosting [NextCloud](https://nextcloud.com/) as a way to stop rely
 
 The NextCloud Android app, together with OpenTasks and DAVx5, work well for automatically uploading all pictures and videos I take with my smartphone, as well as syncing task, calendar and contact information on a regular basis. It works so well that I'm not afraid of wiping out my smartphone for trying different Android ROMs, which was something I did quite frequently before I tried CalyxOS.
 
-In my desktop, the NextCloud app keeps syncing those files to my main computer, so I have at least one copy of all important files. I also run a separate daily backup process via [DejaDup](https://wiki.gnome.org/Apps/DejaDup) that encrypts and uploads all critical data to a S3 bucket via the NextCloud Webdav interface, for redundancy.
+In my desktop, the NextCloud app keeps syncing those files to my main computer, so I have at least one copy of all important files. I also run a separate daily backup process on top of [Duplicity](http://duplicity.nongnu.org/) that encrypts and uploads all critical data to a S3 bucket, for redundancy.
 
 ##### Things to improve
 
 NextCloud is great, but it's not a perfect replacement for all Google products, such as Photos, but I'm willing to make compromises if that makes me less overly dependent on a couple service provider for all my data.
 
-I'll maybe try different solutions for photo/video management and sharing, but this is not bothering me so much at the moment.
+I'm evaluating a few managed NextCloud providers at the moment, since hosting it myself is not very cost effective.
