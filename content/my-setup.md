@@ -21,7 +21,7 @@ I keep the [machine configuration with Ansible](https://github.com/danielfm/arch
 
 ##### Things to improve
 
-I want to migrate to the [Btrfs](https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#Btrfs_subvolumes_with_swap), which has native support for snapshots. This is a nice feature to have in order to protect against upgrade issues.
+I want to migrate to [Btrfs](https://wiki.archlinux.org/index.php/Dm-crypt/Encrypting_an_entire_system#Btrfs_subvolumes_with_swap), which has native support for snapshots. This is a nice feature to have in order to protect against upgrade issues.
 
 In one occasion, I interrupted the upgrade process by mistake, which caused the kernel images from not being generated, and the system stopped booting. Luckily I had taken a snapshot with [Timeshift](https://github.com/teejee2008/timeshift) prior to upgrading, and I was able to restore the snapshot, but the process of taking and restoring snapshots is much easier and faster in Btrfs. I could even take snapshots automatically before applying system updates.
 
