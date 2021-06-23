@@ -44,9 +44,7 @@ I like to use the display in portrait position for reading articles and the othe
 
 This LG is crap. At least I got it cheap. The plastic cover is fragile and the matte surface scratches easily. Also, I currently have an issue where the monitor turns off right after turning it on, especially after using the monitor for several hours straight. The problem goes away after disconnecting the display from the power supply for a few hours. It's really annoying.
 
-The Dell display is very good, but it's starting to age.
-
-Someday I'll buy myself a couple of 4k displays and perhaps some adjustable monitor arms.
+The Dell display is very good, but it's starting to age. I might buy myself a couple of 4k displays someday.
 
 #### ErgoDox EZ Keyboard
 
@@ -56,7 +54,7 @@ Regarding the ergonomics, one issue I had was occasional shoulder and wrist pain
 
 After some research, I decided to purchase myself a programmable split keyboard, and the one I chose was the [ErgoDox EZ](https://ergodox-ez.com/).
 
-With ErgoDox EZ, I managed to move the `Ctrl` key to my thumbs, causing much less strain on my pinkies. I also heavily changed the default layout to fit my needs. To do that, I used [WhatPulse](https://whatpulse.org/) for a while, in order to identify the most pressed keys and gradually changing the keyboard layout towards better ergonomics for my usage. Now I can type for hours straight without busting my arms and hands.
+With ErgoDox EZ, I managed to move the `Ctrl` key to my thumbs, causing much less strain on my pinkies. I also heavily changed the default layout to fit my needs. To do that, I used [WhatPulse](https://whatpulse.org/) for a while, in order to identify the most pressed keys and gradually changing the keyboard layout towards better ergonomics for my usage. Now I can type for hours straight without busting my arms and hands. You can check out my custom layout [here](https://github.com/danielfm/ergodox-layout).
 
 The keyboard is built like a tank. It will probably outlive every other piece of hardware I have, so the high price tag is definitely worth it!
 
@@ -126,15 +124,15 @@ Nothing in particular, but I keep trying small changes to my workflow to see how
 
 #### CalyxOS
 
-I use the same device both for work and my personal life. In order to separate the two, I use the [Shelter app](https://f-droid.org/en/packages/net.typeblog.shelter/) for cloning apps into the work profile and install other apps required for my work from there, such as Slack, [Bitwarden](https://bitwarden.com) and a VPN service.
+I use the same device both for work and my personal life. In order to separate the two, I use a separate Work profile for work-related apps, such as Slack, [Bitwarden](https://bitwarden.com).
 
-I also try to keep privacy-invasive apps in the work profile as well, as this is kept disabled most of the time. The work profile is also configured with always-on VPN to ensure all work related traffic flows through an encrypted tunnel. The VPN service I use also supports a kill switch, so that no traffic is allowed unless the VPN is up and running.
+The work profile is also configured with always-on VPN to ensure all work related traffic flows through an encrypted tunnel. The VPN service I use also supports a kill switch, so that no traffic is allowed unless the VPN is up and running.
 
-I don't keep a Google account signed in this device for extended periods of time. I think I only logged in once so I could restore the Whatsapp backup after switching phones, but logged out right after. For things like push notifications and location services, microg works well enough.
+I keep social networks and other privacy-invasive apps in a separate user. The friction of swapping between users is enough to motivate me to use these applications as little as possible.
 
-My personal profile also have an always-on VPN with a kill switch enabled.
+I don't keep a Google account signed in this device, and my personal profile also have an always-on VPN with a kill switch enabled.
 
-Some of the apps I use regularly: [AntennaPod](https://f-droid.org/en/packages/de.danoeh.antennapod/), [Bromite](https://www.bromite.org/), [DAVx5](https://f-droid.org/en/packages/at.bitfire.davdroid/), [Element](https://f-droid.org/en/packages/im.vector.app/), [Infinity](https://f-droid.org/en/packages/ml.docilealligator.infinityforreddit/), [NewPipe](https://f-droid.org/en/packages/org.schabi.newpipe/), [NextCloud](https://f-droid.org/en/packages/com.nextcloud.client/), [OpenTasks](https://f-droid.org/en/packages/org.dmfs.tasks/), [Orgzly](https://f-droid.org/en/packages/com.orgzly/), [Password Store](https://f-droid.org/en/packages/dev.msfjarvis.aps/), [Signal](https://signal.org/android/apk/), [Yubico Authenticator](https://f-droid.org/en/packages/com.yubico.yubioath/).
+Some of the apps I use regularly: [AntennaPod](https://f-droid.org/en/packages/de.danoeh.antennapod/), [DAVx5](https://f-droid.org/en/packages/at.bitfire.davdroid/), [Element](https://f-droid.org/en/packages/im.vector.app/), [Etesync](https://www.etesync.com/), [Infinity](https://f-droid.org/en/packages/ml.docilealligator.infinityforreddit/), [NewPipe](https://f-droid.org/en/packages/org.schabi.newpipe/), [OpenTasks](https://f-droid.org/en/packages/org.dmfs.tasks/), [Orgzly](https://f-droid.org/en/packages/com.orgzly/), [Password Store](https://f-droid.org/en/packages/dev.msfjarvis.aps/), [Signal](https://signal.org/android/apk/), [Yubico Authenticator](https://f-droid.org/en/packages/com.yubico.yubioath/).
 
 ##### Things to improve
 
@@ -150,16 +148,6 @@ Actually, I only had to give up using Android Auto in my car console, but it see
 
 ### Self-Hosted Services
 
-#### NextCloud
+#### Syncthing
 
-I started self-hosting [NextCloud](https://nextcloud.com/) as a way to stop relying on a single vendor (Google) for almost all my data.
-
-The NextCloud Android app, together with OpenTasks and DAVx5, work well for automatically uploading all pictures and videos I take with my smartphone, as well as syncing task, calendar and contact information on a regular basis. It works so well that I'm not afraid of wiping out my smartphone for trying different Android ROMs, which was something I did quite frequently before I tried CalyxOS.
-
-In my desktop, the NextCloud app keeps syncing those files to my main computer, so I have at least one copy of all important files. I also run a separate daily backup process on top of [Duplicity](http://duplicity.nongnu.org/) that encrypts and uploads all critical data to a S3 bucket, for redundancy.
-
-##### Things to improve
-
-NextCloud is great, but it's not a perfect replacement for all Google products, such as Photos, but I'm willing to make compromises if that makes me less overly dependent on a couple service provider for all my data.
-
-I'm evaluating a few managed NextCloud providers at the moment, since hosting it myself is not very cost effective.
+I started self-hosting [Syncthing](https://syncthing.net/) from an old Raspberry Pi for syncing files across devices. It's surprising how well this works!
