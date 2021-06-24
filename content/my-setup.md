@@ -9,6 +9,8 @@ Not that anyone's interested in this, but I thought about sharing more informati
 
 **Note:** This is a work in progress and things keeps changing all the time, so the information below is most likely outdated.
 
+{{< figure src="/images/my-setup/desk-1.jpg" caption="My desk." alt="My desk" >}}
+
 ### Hardware
 
 #### Lenovo Thinkpad T480
@@ -38,7 +40,7 @@ It's impossible for me to work with just the laptop built-in display.
 
 I like to use the display in portrait position for reading articles and the other one for splitting between text editor, web browsers and terminal windows, all that arranged in different workspaces. I use a [i3wm](https://i3wm.org/), a tiling window manager for simplifying the task of navigating between the different windows in different workspaces and displays with the keyboard.
 
-{{< figure src="/images/my-setup/desk.jpg" caption="My monitor disposition." alt="Desk with monitors, keyboard and trackball" >}}
+{{< figure src="/images/my-setup/desk-2.jpg" caption="Zoomed-in desk view." alt="Zoomed-in desk view" >}}
 
 ##### Things to improve
 
@@ -107,6 +109,15 @@ Aside from the obvious usage scenarios, I also use the hardware tokens in my loc
 ##### Things to improve
 
 The only thing I wish is for more services to properly support hardware tokens and standards like WebAuthn. There are still a lot of sensitive services that still rely on TOTP as second factor (like ProtonMail) and this drives me crazy.
+
+#### Other Hardware
+
+- Logitech C920 PRO HD webcam
+- Kindle Paperwhite
+- Tascam US-100 audio interface
+- Sennheiser HD558 headphone
+- Bose QuietComfort 25 headphone
+- Herman Miller Sayl office chair
 
 ### Software
 
