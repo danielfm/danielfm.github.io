@@ -1,6 +1,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Daniel Martins</title><link>https://danielfm.me/</link><description>Recent content on Daniel Martins</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 22 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://danielfm.me/" rel="self" type="application/rss+xml"/><item><title>My Setup</title><link>https://danielfm.me/my-setup/</link><pubDate>Mon, 22 Mar 2021 00:00:00 +0000</pubDate><author>Daniel Martins</author><guid>https://danielfm.me/my-setup/</guid><description>
 &lt;p>Not that anyone&amp;rsquo;s interested in this, but I thought about sharing more information about my setup and how it&amp;rsquo;s working for me, so here it is.&lt;/p>
 &lt;p>&lt;strong>Note:&lt;/strong> This is a work in progress and things keeps changing all the time, so the information below is most likely outdated.&lt;/p>
+&lt;figure>&lt;img src="https://danielfm.me/images/my-setup/desk-1.jpg"
+alt="My desk"/>&lt;figcaption>
+&lt;p>My desk.&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;h3 id="hardware">Hardware&lt;/h3>
 &lt;h4 id="lenovo-thinkpad-t480">Lenovo Thinkpad T480&lt;/h4>
 &lt;p>I use a &lt;a href="https://www.laptopmag.com/reviews/laptops/lenovo-thinkpad-t480">Thinkpad T480&lt;/a> running Arch Linux as my daily driver.&lt;/p>
@@ -37,9 +42,9 @@
 &lt;/table>
 &lt;p>It&amp;rsquo;s impossible for me to work with just the laptop built-in display.&lt;/p>
 &lt;p>I like to use the display in portrait position for reading articles and the other one for splitting between text editor, web browsers and terminal windows, all that arranged in different workspaces. I use a &lt;a href="https://i3wm.org/">i3wm&lt;/a>, a tiling window manager for simplifying the task of navigating between the different windows in different workspaces and displays with the keyboard.&lt;/p>
-&lt;figure>&lt;img src="https://danielfm.me/images/my-setup/desk.jpg"
-alt="Desk with monitors, keyboard and trackball"/>&lt;figcaption>
-&lt;p>My monitor disposition.&lt;/p>
+&lt;figure>&lt;img src="https://danielfm.me/images/my-setup/desk-2.jpg"
+alt="Zoomed-in desk view"/>&lt;figcaption>
+&lt;p>Zoomed-in desk view.&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;h5 id="things-to-improve-1">Things to improve&lt;/h5>
@@ -80,6 +85,15 @@ alt="ErgoDox EZ and Kensington Orbit trackpad"/>&lt;figcaption>
 &lt;p>Aside from the obvious usage scenarios, I also use the hardware tokens in my local machine as a second factor and for authenticating &lt;code>sudo&lt;/code>.&lt;/p>
 &lt;h5 id="things-to-improve-5">Things to improve&lt;/h5>
 &lt;p>The only thing I wish is for more services to properly support hardware tokens and standards like WebAuthn. There are still a lot of sensitive services that still rely on TOTP as second factor (like ProtonMail) and this drives me crazy.&lt;/p>
+&lt;h4 id="other-hardware">Other Hardware&lt;/h4>
+&lt;ul>
+&lt;li>Logitech C920 PRO HD webcam&lt;/li>
+&lt;li>Kindle Paperwhite&lt;/li>
+&lt;li>Tascam US-100 audio interface&lt;/li>
+&lt;li>Sennheiser HD558 headphone&lt;/li>
+&lt;li>Bose QuietComfort 25 headphone&lt;/li>
+&lt;li>Herman Miller Sayl office chair&lt;/li>
+&lt;/ul>
 &lt;h3 id="software">Software&lt;/h3>
 &lt;h4 id="desktop">Desktop&lt;/h4>
 &lt;p>I use &lt;a href="https://i3wm.org/">i3wm&lt;/a> as the window manager, which helps me spread editors, terminals, browsers and other apps across the different displays and navigate between them quickly without leaving the keyboard.&lt;/p>
